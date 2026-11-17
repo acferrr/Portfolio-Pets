@@ -35,6 +35,7 @@ function shiftHex(hex, d) { const n = parseInt(hex.slice(1), 16), f = x => Math.
 function ytId(u) { const m = String(u || '').match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/i); return m ? m[1] : ''; }
 const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
 const cssUrl = u => `url("${String(u).replace(/"/g, '%22')}")`;
+const px = v => v + ' px';
 
 async function uploadImage(file) {
   let blob = file, ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
@@ -162,6 +163,18 @@ function group(obj, title, help, ...kids) {
 }
 
 /* ========== PRÉVIAS ========== */
+function brandPreview(b) {
+  const box = h('div', { style: 'border-radius:14px;padding:22px;background:#0e0c0a;color:#e9e2ce;display:flex;align-items:center;gap:14px;min-height:110px;overflow:hidden' });
+  const draw = () => {
+    box.innerHTML = '';
+    const lg = !!b.logo;
+    if (b.profileImg && (!lg || b.showPhotoWithLogo)) box.append(h('img', { src: b.profileImg, alt: '', style: 'width:58px;height:58px;border-radius:50%;object-fit:cover;flex-shrink:0' }));
+    if (lg) { const L = window.SITE_BRAND_STYLE(b); box.append(h('div', { style: L.wrap }, h('img', { src: b.logo, alt: '', style: 'width:100%;height:auto;display:block' }))); }
+    if (!lg || b.showNameWithLogo) box.append(h('div', {}, h('div', { style: 'font-family:Fraunces,Georgia,serif;font-size:26px;font-weight:500' }, b.name || ''), h('div', { style: 'font-size:12px;opacity:.7' }, b.tagline || '')));
+  };
+  draw(); previews.push(draw);
+  return h('div', {}, box, h('div', { class: 'f-help' }, '👀 Prévia do canto superior esquerdo. Muda na hora.'));
+}
 function cardPreview(c) {
   const card = h('div', { class: 'pv-card' });
   const draw = () => {
@@ -184,10 +197,7 @@ function bandPreview(c) {
     if (c.bgImg) box.append(h('div', { style: `position:absolute;inset:0;background:${cssUrl(c.bgImg)} center/cover;opacity:${(c.bgOpacity ?? 20) / 100}` }));
     const inner = h('div', { style: 'position:relative' });
     inner.append(h('div', { style: 'font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.9' }, c.kicker || 'Nicho'));
-    if (c.bandLogo) {
-      const L = window.SITE_LOGO_STYLE(c);
-      inner.append(h('div', { style: 'margin:16px 0 6px;' + L.wrap }, h('img', { src: c.bandLogo, alt: '', style: 'width:100%;height:auto;display:block;' + L.img })));
-    }
+    if (c.bandLogo) { const L = window.SITE_LOGO_STYLE(c); inner.append(h('div', { style: 'margin:16px 0 6px;' + L.wrap }, h('img', { src: c.bandLogo, alt: '', style: 'width:100%;height:auto;display:block;' + L.img }))); }
     if (c.title && (!c.bandLogo || c.bandShowName !== false)) inner.append(h('div', { style: 'font-family:Fraunces,Georgia,serif;font-weight:500;font-size:40px;line-height:1;margin:10px 0' }, c.title));
     if (c.sub) inner.append(h('div', { style: 'font-family:Fraunces,Georgia,serif;font-style:italic;font-size:17px;opacity:.92;max-width:44ch' }, c.sub));
     box.append(inner);
@@ -200,15 +210,24 @@ function bandPreview(c) {
 const NAMES = { audience: '👥 Para quem é', clients: '🎬 Clientes e vídeos', testimonials: '💬 Depoimentos', plans: '💰 Orçamento', services: '🧰 Serviços', compare: '⚖️ Comparativo', process: '🔁 Processo', about: '🙋 Quem faz', cta: '📣 Chamada final' };
 const newClient = () => ({ id: uid('c'), kicker: '', title: 'Novo cliente', sub: '', meta: 'Meta Ads · Reels', concept: false, c: '#1a3f2d', light: '#467060', deep: '#0f2a1d',
   heroImg: '', heroImgZoom: 0, heroImgX: 50, heroImgY: 50, heroOverlay: 55, showTitle: true, bgImg: '', bgOpacity: 20, gradientOpacity: 60,
-  bandLogo: '', bandShowName: true, bandLogoWidth: 280, bandLogoX: 0, bandLogoY: 0, bandLogoShadow: 40, bandLogoOpacity: 100, bandLogoFade: 0, bandLogoFadeDir: 'baixo',
+  bandLogo: '', bandShowName: true, bandLogoWidth: 280, bandLogoX: 0, bandLogoY: 0, bandLogoShadow: 40, bandLogoOpacity: 100, bandLogoRadius: 0, bandLogoFade: 0, bandLogoFadeDir: 'baixo',
   groups: [{ name: '', clips: [] }] });
-const px = v => v + ' px';
 
 function tabTopo(p) {
+  const b = S.brand;
   p.append(
-    panel('Marca', 'Nome e foto do canto superior esquerdo do site.',
-      two(tText(S.brand, 'name', 'Nome da marca'), tText(S.brand, 'tagline', 'Frase abaixo do nome')),
-      tImage(S.brand, 'profileImg', 'Foto de perfil', 'Aparece em círculo. Use uma foto quadrada.')),
+    panel('Logo e marca', 'O que aparece no canto superior esquerdo. Com uma logo enviada, ela substitui a foto e o nome. Esta logo é só do topo e do rodapé.',
+      brandPreview(b),
+      tImage(b, 'logo', 'Logo da ACEFER', 'PNG com fundo transparente, em creme ou branco para o tema noturno.'),
+      tRange(b, 'logoWidth', 'Tamanho da logo', null, 60, 500, px),
+      two(tRange(b, 'logoX', 'Mover para os lados', 'Negativo = esquerda · positivo = direita', -100, 100, px),
+          tRange(b, 'logoY', 'Mover para cima ou para baixo', 'Negativo = sobe · positivo = desce', -40, 40, px)),
+      two(tRange(b, 'logoShadow', 'Sombra da logo', '0 = sem sombra', 0, 100), tRange(b, 'logoOpacity', 'Opacidade da logo', null, 10, 100)),
+      tRange(b, 'logoRadius', 'Arredondar cantos', '0 = cantos retos', 0, 120, px),
+      two(tToggle(b, 'showPhotoWithLogo', 'Mostrar a foto junto com a logo'), tToggle(b, 'showNameWithLogo', 'Mostrar o nome junto com a logo')),
+      tToggle(b, 'logoInFooter', 'Usar a logo também no rodapé'),
+      two(tText(b, 'name', 'Nome da marca', 'Usado quando não há logo e nos textos alternativos.'), tText(b, 'tagline', 'Frase abaixo do nome')),
+      tImage(b, 'profileImg', 'Foto de perfil', 'Aparece quando não há logo, ou se a chave acima estiver ligada.')),
     panel('Título principal', 'O primeiro texto que o visitante lê.', tArea(S.hero, 'headline', 'Título grande', null, 2), tArea(S.hero, 'subheadline', 'Texto abaixo dos cards dos clientes', null, 3)),
     panel('Selos e botões', null,
       two(tToggle(S.hero, 'showInstaBadge', 'Mostrar selo do Instagram'), tText(S.hero, 'badgeRight', 'Texto do selo da direita', 'Vazio = escondido.')),
@@ -224,23 +243,23 @@ function tabClientes(p) {
       body: c => [
         sub('📋 Informações', 'O nome é usado em vários lugares. Não apague: para escondê-lo, use as chaves de cada bloco.',
           two(tText(c, 'title', 'Nome do cliente'), tText(c, 'kicker', 'Nicho', 'Ex.: Nutrição Equina')),
-          tArea(c, 'sub', 'Descrição curta', null, 2),
+          tArea(c, 'sub', 'Descrição curta', 'Só o básico: o que a empresa vende, em uma frase.', 2),
           two(tText(c, 'meta', 'Plataformas', 'Ex.: Meta Ads · Reels'), tToggle(c, 'concept', 'Marcar como "Projeto conceito"'))),
-        sub('🃏 Card no topo do site', 'O cartão inclinado logo abaixo do título principal.',
+        sub('🃏 Card no topo do site', 'O cartão inclinado logo abaixo do título principal. Estes ajustes e esta imagem só valem para o card.',
           cardPreview(c),
-          tImage(c, 'heroImg', 'Logo ou imagem do card', 'PNG com fundo transparente fica melhor. Ideal: 600 px de largura.'),
+          tImage(c, 'heroImg', 'Imagem do card', 'Pode ser uma foto ou arte. PNG com fundo transparente também funciona.'),
           tRange(c, 'heroImgZoom', 'Tamanho da imagem', '0 = preenche o card inteiro.', 0, 300, v => v ? v + '%' : 'Automático'),
           two(tRange(c, 'heroImgX', 'Posição horizontal', '0 = esquerda · 100 = direita', 0, 100), tRange(c, 'heroImgY', 'Posição vertical', '0 = topo · 100 = base', 0, 100)),
           tRange(c, 'heroOverlay', 'Sombra escura sobre a imagem', '0 = sem sombra.', 0, 100, v => v ? v + '%' : 'Sem sombra'),
           tToggle(c, 'showTitle', 'Mostrar o nome do cliente no card', 'Só afeta o card. A faixa tem a própria chave.')),
-        sub('🏷️ Logo na faixa dos vídeos', 'Aparece no lugar do nome em texto, na faixa colorida.',
+        sub('🏷️ Logo na faixa dos vídeos', 'Imagem separada da do card. Envie aqui a logo da empresa. Estes ajustes só valem para a faixa.',
           bandPreview(c),
           tImage(c, 'bandLogo', 'Logo da empresa', 'PNG com fundo transparente, de preferência em branco ou claro.'),
-          h('div', {}, h('button', { type: 'button', class: 'b ghost sm', onclick: () => { c.bandLogo = c.heroImg; dirty(); rerender(); } }, '↺ Usar a mesma imagem do card')),
           tRange(c, 'bandLogoWidth', 'Tamanho da logo', null, 60, 600, px),
           two(tRange(c, 'bandLogoX', 'Mover para os lados', 'Negativo = esquerda · positivo = direita', -200, 200, px),
               tRange(c, 'bandLogoY', 'Mover para cima ou para baixo', 'Negativo = sobe · positivo = desce', -120, 120, px)),
           two(tRange(c, 'bandLogoShadow', 'Sombra da logo', '0 = sem sombra', 0, 100), tRange(c, 'bandLogoOpacity', 'Opacidade da logo', '100 = totalmente visível', 10, 100)),
+          tRange(c, 'bandLogoRadius', 'Arredondar cantos', '0 = cantos retos', 0, 120, px),
           two(tRange(c, 'bandLogoFade', 'Degradê (esmaecer a logo)', '0 = sem degradê', 0, 100),
               tSelect(c, 'bandLogoFadeDir', 'Direção do degradê', null, [['baixo', '↓ Some para baixo'], ['cima', '↑ Some para cima'], ['esquerda', '← Some para a esquerda'], ['direita', '→ Some para a direita']])),
           tToggle(c, 'bandShowName', 'Mostrar também o nome em texto na faixa', 'Desligue para mostrar só a logo.')),
@@ -248,10 +267,10 @@ function tabClientes(p) {
           tColor(c, 'c', 'Cor da faixa', 'Os tons claro e escuro são calculados sozinhos.', v => { c.light = shiftHex(v, 44); c.deep = shiftHex(v, -44); }),
           tImage(c, 'bgImg', 'Foto de fundo da faixa', 'Opcional.'),
           two(tRange(c, 'bgOpacity', 'Visibilidade da foto de fundo', '0 = invisível', 0, 100), tRange(c, 'gradientOpacity', 'Brilho colorido (degradê da faixa)', '0 = cor lisa', 0, 100))),
-        sub('▶️ Vídeos', 'Grupos separam, por exemplo, "Anúncios" e "Reels". Se não precisar, deixe um grupo só, sem nome.',
+        sub('▶️ Vídeos', 'Grupos separam, por exemplo, produtos diferentes. Se não precisar, deixe um grupo só, sem nome.',
           repeater(c.groups, {
             title: g => '📁 ' + (g.name || 'Grupo sem nome'), template: { name: '', clips: [] }, addLabel: 'Adicionar grupo',
-            body: g => [tText(g, 'name', 'Nome do grupo (opcional)'),
+            body: g => [tText(g, 'name', 'Nome do grupo (opcional)', 'Ex.: Equinutri Complete'),
               repeater(g.clips, { label: 'Vídeos deste grupo', title: v => (v.src ? '🎬 ' : '⚪ ') + (v.label || 'Vídeo'), template: { label: 'Ad 01', dur: '', src: '', poster: '' }, addLabel: 'Adicionar vídeo',
                 body: v => [two(tText(v, 'label', 'Rótulo', 'Ex.: Ad 01'), tText(v, 'dur', 'Duração (opcional)', 'Ex.: 0:25')), tVideo(v, 'src', 'Link do vídeo')] })]
           }))
@@ -349,8 +368,7 @@ function tabAparencia(p) {
     const tx = h('div', { style: 'position:relative;font-family:Fraunces,Georgia,serif;font-weight:500;font-size:28px;text-align:center' }, 'Aa', h('div', { style: 'font-family:var(--sans);font-size:12px;opacity:.7' }, name));
     b.append(g, tx);
     const draw = () => {
-      const T = window.SITE_TEXTURE(t.texture, t.textureColor, t.textureIntensity, t.textureSize);
-      const inv = k === 'fg';
+      const T = window.SITE_TEXTURE(t.texture, t.textureColor, t.textureIntensity, t.textureSize), inv = k === 'fg';
       b.style.background = t[k]; tx.style.color = inv ? t.bg : t.fg;
       g.style.backgroundImage = T.img; g.style.backgroundSize = T.size;
       g.style.opacity = (t.textureOpacity ?? 35) / 100; g.style.filter = inv ? 'invert(1)' : 'none';
@@ -433,7 +451,7 @@ $('btnLogout').addEventListener('click', async () => { if (isDirty && !confirm('
 /* Carrega o engine.js e só então libera o painel */
 (function start() {
   const s = document.createElement('script');
-  s.src = 'engine.js?v=3';
+  s.src = 'engine.js?v=5';
   s.onload = () => {
     showLogin();
     Promise.race([sb.auth.getSession(), new Promise(r => setTimeout(() => r({ data: { session: null } }), 4000))])

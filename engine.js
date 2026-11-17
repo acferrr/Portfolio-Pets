@@ -5,6 +5,7 @@
 (function () {
   const D = window.SITE_DEFAULT;
   D.version = 3;
+  Object.assign(D.brand, { logo: '', logoWidth: 200, logoX: 0, logoY: 0, logoShadow: 0, logoOpacity: 100, logoRadius: 0, showPhotoWithLogo: false, showNameWithLogo: false, logoInFooter: true });
   D.theme = { bg: '#0e0c0a', fg: '#e9e2ce', deep: '#02100c', texture: 'papel', textureColor: '#e9e2ce', textureOpacity: 35, textureIntensity: 60, textureSize: 50 };
 })();
 
@@ -44,14 +45,20 @@ window.SITE_TEXTURE = function (type, color, intensity, size) {
 };
 
 window.SITE_LOGO_STYLE = function (c) {
-  const s = (c.bandLogoShadow ?? 40) / 100, fd = +c.bandLogoFade || 0;
+  const s = (c.bandLogoShadow ?? 40) / 100, fd = +c.bandLogoFade || 0, rad = +c.bandLogoRadius || 0;
   const dir = { baixo: 'to bottom', cima: 'to top', esquerda: 'to left', direita: 'to right' }[c.bandLogoFadeDir] || 'to bottom';
   const filter = s > 0 ? `drop-shadow(0 ${Math.round(s * 12)}px ${Math.round(s * 28)}px rgba(0,0,0,${(s * .65).toFixed(2)}))` : 'none';
   const grad = `linear-gradient(${dir},#000 ${100 - fd}%,transparent 100%)`;
   return {
-    wrap: `width:min(${c.bandLogoWidth ?? 280}px,100%);transform:translate(${c.bandLogoX ?? 0}px,${c.bandLogoY ?? 0}px);opacity:${(c.bandLogoOpacity ?? 100) / 100};filter:${filter};`,
+    wrap: `width:min(${c.bandLogoWidth ?? 280}px,100%);transform:translate(${c.bandLogoX ?? 0}px,${c.bandLogoY ?? 0}px);opacity:${(c.bandLogoOpacity ?? 100) / 100};filter:${filter};` +
+          (rad > 0 ? `border-radius:${rad}px;overflow:hidden;` : ''),
     img: fd > 0 ? `-webkit-mask-image:${grad};mask-image:${grad};` : ''
   };
+};
+
+/* Estilo da logo do topo (mesmas regras, campos próprios) */
+window.SITE_BRAND_STYLE = function (b) {
+  return window.SITE_LOGO_STYLE({ bandLogoWidth: b.logoWidth, bandLogoX: b.logoX, bandLogoY: b.logoY, bandLogoShadow: b.logoShadow ?? 0, bandLogoOpacity: b.logoOpacity, bandLogoRadius: b.logoRadius });
 };
 
 window.SITE_MIGRATE = function (saved) {
@@ -82,11 +89,10 @@ window.SITE_MIGRATE = function (saved) {
   const CD = { id: '', kicker: '', title: 'Novo cliente', sub: '', meta: 'Meta Ads · Reels', concept: false,
     c: '#1a3f2d', light: '#467060', deep: '#0f2a1d', heroImg: '', heroImgZoom: 0, heroImgX: 50, heroImgY: 50, heroOverlay: 55, showTitle: true,
     bgImg: '', bgOpacity: 20, gradientOpacity: 60,
-    bandLogo: '', bandShowName: true, bandLogoWidth: 280, bandLogoX: 0, bandLogoY: 0, bandLogoShadow: 40, bandLogoOpacity: 100, bandLogoFade: 0, bandLogoFadeDir: 'baixo',
+    bandLogo: '', bandShowName: true, bandLogoWidth: 280, bandLogoX: 0, bandLogoY: 0, bandLogoShadow: 40, bandLogoOpacity: 100, bandLogoRadius: 0, bandLogoFade: 0, bandLogoFadeDir: 'baixo',
     groups: [] };
   out.clients = (Array.isArray(out.clients) ? out.clients : []).map(c => {
     const n = { ...CD, ...clean(c) };
-    if (ver < 3 && !c.bandLogo && c.heroImg) { n.bandLogo = c.heroImg; n.bandShowName = false; }
     n.groups = (n.groups || []).map(g => ({ name: g.name || '', clips: (g.clips || []).map(x => ({ label: '', dur: '', src: '', poster: '', ...x })) }));
     return n;
   });
