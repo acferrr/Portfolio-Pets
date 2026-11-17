@@ -422,4 +422,236 @@
               tImage(c, 'heroImg', 'Logo ou imagem do card', 'Logo em PNG com fundo transparente fica melhor. Tamanho ideal: 600 px de largura.'),
               tRange(c, 'heroImgZoom', 'Tamanho da imagem', '0 = a imagem preenche o card inteiro.', 0, 300, v => v ? v + '%' : 'Automático'),
               two(tRange(c, 'heroImgX', 'Posição horizontal', '0 = esquerda · 100 = direita', 0, 100),
-                  tRange(c,
+                  tRange(c, 'heroImgY', 'Posição vertical', '0 = topo · 100 = base', 0, 100)),
+              tRange(c, 'heroOverlay', 'Sombra escura sobre a imagem', '0 = sem sombra. Aumente se o nome do cliente ficar difícil de ler.', 0, 100, v => v ? v + '%' : 'Sem sombra'),
+              tToggle(c, 'showTitle', 'Mostrar o nome do cliente no card', 'Desligue se o logo já mostra o nome.')),
+            sub('🎞️ Faixa colorida dos vídeos', 'A faixa inclinada, mais abaixo no site, onde ficam os vídeos deste cliente.',
+              tColor(c, 'c', 'Cor da faixa', 'Os tons claro e escuro são calculados sozinhos.', v => { c.light = shiftHex(v, 44); c.deep = shiftHex(v, -44); }),
+              tImage(c, 'bgImg', 'Foto de fundo da faixa', 'Opcional. Fica bem clarinha, atrás da cor.'),
+              two(tRange(c, 'bgOpacity', 'Visibilidade da foto de fundo', '0 = invisível', 0, 100),
+                  tRange(c, 'gradientOpacity', 'Brilho colorido (degradê)', '0 = cor lisa, sem degradê', 0, 100))),
+            sub('▶️ Vídeos', 'Use grupos para separar, por exemplo, "Anúncios" e "Reels". Se não precisar, deixe um grupo só, sem nome.',
+              repeater(c.groups, {
+                title: g => g.name ? `📁 ${g.name}` : '📁 Grupo sem nome', template: { name: '', clips: [] }, addLabel: 'Adicionar grupo',
+                body: g => [
+                  tText(g, 'name', 'Nome do grupo (opcional)', 'Ex.: Anúncios, Reels'),
+                  repeater(g.clips, {
+                    label: 'Vídeos deste grupo',
+                    title: v => `${ytId(v.src) || v.src ? '🎬' : '⚪'} ${v.label || 'Vídeo'}`,
+                    template: { label: 'Ad 01', dur: '', src: '', poster: '' }, addLabel: 'Adicionar vídeo',
+                    body: v => [two(tText(v, 'label', 'Rótulo', 'Ex.: Ad 01'), tText(v, 'dur', 'Duração (opcional)', 'Ex.: 0:25')), tVideo(v, 'src', 'Link do vídeo')]
+                  })
+                ]
+              }))
+          ]
+        })));
+    }
+
+    function tabOrcamento(p) {
+      p.append(panel('Seção de orçamento', 'Quando o visitante clica em "Solicitar orçamento", o site rola até aqui e mostra o aviso. Cada opção abre o WhatsApp com uma mensagem pronta.',
+        two(tText(S.plans, 'eyebrow', 'Texto pequeno acima do título'), tText(S.plans, 'title', 'Título')),
+        tArea(S.plans, 'text', 'Texto de apoio (opcional)', null, 2),
+        tText(S.plans, 'attention', 'Aviso que aparece ao chegar', 'Ex.: Selecione o que você precisa'),
+        repeater(S.plans.items, {
+          label: 'Opções', title: x => (x.highlight ? '⭐ ' : '') + (x.title || 'Opção'), addLabel: 'Adicionar opção',
+          template: { title: 'Nova opção', tag: '', desc: '', bullets: [], button: 'Quero este', message: 'Olá! Vim pelo site e quero um orçamento.', highlight: false },
+          body: x => [
+            two(tText(x, 'title', 'Nome da opção'), tText(x, 'tag', 'Etiqueta', 'Ex.: Mais completo')),
+            tArea(x, 'desc', 'Descrição', null, 2),
+            tList(x.bullets, 'Tópicos', null, 'Ex.: Legenda na tela', 'Adicionar tópico'),
+            tText(x, 'button', 'Texto do botão'),
+            tArea(x, 'message', 'Mensagem que vai pronta no WhatsApp', 'Dica: *asteriscos* deixam o texto em negrito no WhatsApp.', 2),
+            tToggle(x, 'highlight', 'Destacar esta opção', 'Fica com fundo verde, chamando mais atenção.')
+          ]
+        })));
+    }
+
+    function layoutList() {
+      const box = h('div', { class: 'list' });
+      S.layout.forEach((l, i) => {
+        const cs = l.key.startsWith('custom:') ? S.custom.find(x => 'custom:' + x.id === l.key) : null;
+        const name = cs ? '✨ ' + (cs.title || 'Seção personalizada') : (NAMES[l.key] || l.key);
+        const sw = h('input', { type: 'checkbox' }); sw.checked = l.on !== false;
+        const row = h('div', { class: 'layout-row' + (l.on === false ? ' off' : '') },
+          h('span', { class: 'n' }, String(i + 1).padStart(2, '0')),
+          h('span', { class: 'nm' }, name),
+          h('label', { class: 'switch', title: 'Mostrar ou esconder' }, sw, h('span', { class: 'knob' })),
+          ctrl('↑', () => { swap(S.layout, i, i - 1); dirty(); rerender(); }, i === 0),
+          ctrl('↓', () => { swap(S.layout, i, i + 1); dirty(); rerender(); }, i === S.layout.length - 1));
+        sw.addEventListener('change', () => { l.on = sw.checked; row.classList.toggle('off', !l.on); dirty(); });
+        box.append(row);
+      });
+      return box;
+    }
+
+    function tabSecoes(p) {
+      p.append(
+        panel('Ordem e visibilidade', 'Use ↑ ↓ para mudar a ordem das seções no site. A chave liga e desliga: seção desligada some do site, mas nada é apagado. O topo e o rodapé ficam sempre no lugar.', layoutList()),
+        panel('Seções personalizadas', 'Crie seções novas com texto, imagens e vídeos. Elas entram na lista acima, onde você escolhe a posição.',
+          repeater(S.custom, {
+            title: s => '✨ ' + (s.title || 'Seção sem título'), addLabel: 'Criar nova seção',
+            template: () => ({ id: uid('s'), eyebrow: '', title: 'Nova seção', text: '', bg: 'auto', media: [] }),
+            onAdd: s => { const i = S.layout.findIndex(l => l.key === 'cta'); const e = { key: 'custom:' + s.id, on: true }; i >= 0 ? S.layout.splice(i, 0, e) : S.layout.push(e); },
+            onRemove: s => { S.layout = S.layout.filter(l => l.key !== 'custom:' + s.id); },
+            body: s => [
+              two(tText(s, 'eyebrow', 'Texto pequeno acima do título', 'Opcional. Ex.: Bastidores'), tText(s, 'title', 'Título')),
+              tArea(s, 'text', 'Texto', null, 5),
+              tSelect(s, 'bg', 'Cor de fundo', null, [['auto', 'Automático (alterna branco e creme)'], ['branco', 'Branco'], ['creme', 'Creme'], ['verde', 'Verde']]),
+              repeater(s.media, {
+                label: 'Imagens e vídeos', help: 'Adicione quantos quiser. Eles aparecem em grade, na ordem da lista.',
+                title: m => (m.type === 'video' ? '🎬 ' : '🖼️ ') + (m.caption || (m.type === 'video' ? 'Vídeo' : 'Imagem')),
+                template: { type: 'image', src: '', format: 'horizontal', caption: '' }, addLabel: 'Adicionar imagem ou vídeo',
+                body: m => [
+                  two(tSelect(m, 'type', 'Tipo', null, [['image', '🖼️ Imagem'], ['video', '🎬 Vídeo']], rerender),
+                      tSelect(m, 'format', 'Formato', null, [['horizontal', 'Horizontal (16:9)'], ['vertical', 'Vertical (9:16, tipo Reels)'], ['quadrado', 'Quadrado (1:1)']])),
+                  m.type === 'video' ? tVideo(m, 'src', 'Vídeo') : tImage(m, 'src', 'Imagem'),
+                  tText(m, 'caption', 'Legenda (opcional)')
+                ]
+              })
+            ]
+          }))
+      );
+    }
+
+    function tabTextos(p) {
+      const A = S.audience, T = S.testimonials, SV = S.services, C = S.compare, PR = S.process, AB = S.about, CT = S.cta;
+      p.append(panel('Textos das seções', 'Clique em uma seção para editar. Para ligar, desligar ou mudar a ordem, use a aba "Seções do site".',
+        group(A, '👥 Para quem é', null,
+          two(tText(A, 'eyebrow', 'Texto pequeno acima do título'), tText(A, 'title', 'Título')),
+          repeater(A.items, { label: 'Cartões', title: x => x.title || 'Cartão', template: { title: '', text: '' }, addLabel: 'Adicionar cartão',
+            body: x => [tText(x, 'title', 'Título do cartão'), tArea(x, 'text', 'Texto', null, 3)] })),
+        group(T, '💬 Depoimentos', 'A seção só aparece quando houver pelo menos um depoimento.',
+          two(tText(T, 'eyebrow', 'Texto pequeno acima do título'), tText(T, 'title', 'Título')),
+          repeater(T.items, { label: 'Depoimentos', title: x => x.name || 'Depoimento', template: { name: '', role: '', text: '', video: '' }, addLabel: 'Adicionar depoimento',
+            body: x => [two(tText(x, 'name', 'Nome'), tText(x, 'role', 'Cargo / empresa')), tArea(x, 'text', 'O que a pessoa disse', null, 3), tVideo(x, 'video', 'Vídeo do depoimento (opcional)')] })),
+        group(SV, '🧰 Serviços', null,
+          two(tText(SV, 'eyebrow', 'Texto pequeno acima do título'), tText(SV, 'title', 'Título')),
+          repeater(SV.items, { label: 'Serviços', title: x => x.title || 'Serviço', template: { badge: '', tag: '', title: '', text: '', bullets: [] }, addLabel: 'Adicionar serviço',
+            body: x => [two(tText(x, 'badge', 'Selo', 'Ex.: Principal'), tText(x, 'tag', 'Etiqueta', 'Ex.: Instagram e Facebook')), tText(x, 'title', 'Título'), tArea(x, 'text', 'Texto', null, 2), tList(x.bullets, 'Tópicos', null, '', 'Adicionar tópico')] })),
+        group(C, '⚖️ Comparativo', null,
+          two(tText(C, 'eyebrow', 'Texto pequeno acima do título'), tText(C, 'title', 'Título')),
+          two(tText(C, 'theirsLabel', 'Nome do lado "comum"'), tText(C, 'oursLabel', 'Nome do seu lado')),
+          two(tList(C.theirs, 'Itens do lado comum', null, '', 'Adicionar item'), tList(C.ours, 'Seus itens', null, '', 'Adicionar item')),
+          tText(C, 'button', 'Texto do botão', 'Leva até a seção de orçamento. Deixe vazio para esconder.')),
+        group(PR, '🔁 Processo', null,
+          two(tText(PR, 'eyebrow', 'Texto pequeno acima do título'), tText(PR, 'title', 'Título')),
+          repeater(PR.steps, { label: 'Etapas', title: (x, i) => `${String(i + 1).padStart(2, '0')} · ${x.title || 'Etapa'}`, template: { title: '', text: '' }, addLabel: 'Adicionar etapa',
+            body: x => [tText(x, 'title', 'Nome da etapa'), tArea(x, 'text', 'Texto', null, 2)] })),
+        group(AB, '🙋 Quem faz', null,
+          two(tText(AB, 'eyebrow', 'Texto pequeno acima do título'), tText(AB, 'title', 'Título')),
+          tImage(AB, 'photo', 'Sua foto', 'Vertical fica melhor. Se ficar vazio, usa a foto de perfil.'),
+          two(tText(AB, 'name', 'Nome'), tText(AB, 'role', 'Cargo')),
+          tText(AB, 'origin', 'De onde você é', 'Ex.: Manaus, AM'),
+          tArea(AB, 'text', 'Sobre você', null, 5),
+          tList(AB.markets, 'Mercados em que já atuou', null, 'Ex.: Nutrição equina', 'Adicionar mercado'),
+          tText(AB, 'companyTitle', 'Título do bloco da empresa'),
+          tArea(AB, 'companyText', 'Sobre a ACEFER', null, 4)),
+        group(CT, '📣 Chamada final', 'A faixa verde no fim da página.',
+          tText(CT, 'eyebrow', 'Texto pequeno acima do título'), tArea(CT, 'title', 'Título', null, 2), tText(CT, 'button', 'Texto do botão'))
+      ));
+    }
+
+    function tabContato(p) {
+      p.append(panel('Contato', 'Usados nos botões e links do site inteiro.',
+        tText(S.contact, 'whatsapp', 'Link do WhatsApp', 'Formato: https://wa.me/5592988288211 (55 + DDD + número, sem espaços).'),
+        tText(S.contact, 'email', 'E-mail'),
+        tText(S.contact, 'instagram', 'Instagram', 'Ex.: @oalexeditor')));
+    }
+
+    function tabAparencia(p) {
+      p.append(
+        panel('Cores', 'Mudam o site inteiro. As cores de cada cliente ficam na aba "Clientes e vídeos".',
+          tColor(S.theme, 'primary', 'Cor principal', 'Botões, títulos, rodapé e destaques.'),
+          tColor(S.theme, 'cream', 'Cor creme', 'Fundos alternados, selos e detalhes.'),
+          tColor(S.theme, 'paper', 'Cor de fundo', 'A cor predominante do site.'),
+          h('div', {}, h('button', { type: 'button', class: 'b ghost sm', onclick: () => { Object.assign(S.theme, { primary: '#1a3f2d', cream: '#e9e2ce', paper: '#ffffff' }); dirty(); rerender(); } }, '↺ Voltar às cores originais'))),
+        panel('Textura do fundo', 'Textura de papel desenhada em vetor: fica nítida em qualquer tela.',
+          tToggle(S.theme, 'texture', 'Usar textura de papel'),
+          tRange(S.theme, 'textureStrength', 'Intensidade da textura', null, 0, 100)),
+        panel('Fontes', 'Títulos em Playfair Display (serifada vintage, em negrito). Textos na fonte do sistema da Apple (SF Pro), com a Inter como alternativa no Windows e no Android.')
+      );
+    }
+
+    const TABS = [
+      { id: 'topo', name: '🏠 Topo', render: tabTopo },
+      { id: 'clientes', name: '🎬 Clientes e vídeos', render: tabClientes },
+      { id: 'orcamento', name: '💰 Orçamento', render: tabOrcamento },
+      { id: 'secoes', name: '🧩 Seções do site', render: tabSecoes },
+      { id: 'textos', name: '📝 Textos das seções', render: tabTextos },
+      { id: 'contato', name: '📞 Contato', render: tabContato },
+      { id: 'aparencia', name: '🎨 Aparência', render: tabAparencia }
+    ];
+
+    function renderTab() {
+      previews = [];
+      const nav = $('tabs'); nav.innerHTML = '';
+      TABS.forEach(t => nav.append(h('button', { class: 'tab' + (t.id === tab ? ' on' : ''), onclick: () => { tab = t.id; renderTab(); window.scrollTo(0, 0); } }, t.name)));
+      const p = $('panel'); p.innerHTML = '';
+      TABS.find(t => t.id === tab).render(p);
+    }
+
+    /* ===================== DADOS ===================== */
+    async function load() {
+      const { data, error } = await sb.from('site_content').select('data').eq('id', 1).maybeSingle();
+      if (error) toast('Erro ao carregar: ' + error.message, true);
+      const raw = data && data.data;
+      const empty = !raw || !Object.keys(raw).length;
+      S = MIGRATE(empty ? null : raw);
+      renderTab();
+      if (empty) { dirty(); toast('Primeiro acesso: clique em Salvar para publicar.'); }
+      else if (raw.version !== 2) { dirty(); toast('Atualizei seus dados para o formato novo. Clique em Salvar.'); }
+      else setClean();
+    }
+
+    async function save() {
+      const b = $('btnSave');
+      b.disabled = true; b.textContent = 'Salvando…';
+      const { data, error } = await sb.from('site_content').update({ data: S, updated_at: new Date().toISOString() }).eq('id', 1).select('id');
+      b.disabled = false; b.textContent = 'Salvar';
+      if (error) return toast('Erro ao salvar: ' + error.message, true);
+      if (!data || !data.length) return toast('Sem permissão para salvar. Confira se o e-mail da política do Supabase é o mesmo do login.', true);
+      setClean();
+      toast('Salvo! O site já está atualizado.');
+    }
+
+    $('btnSave').addEventListener('click', save);
+    document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && !$('app').hidden) { e.preventDefault(); save(); } });
+    $('btnBackup').addEventListener('click', () => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' }));
+      a.download = `site-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+    });
+    $('btnRestore').addEventListener('click', () => $('restoreFile').click());
+    $('restoreFile').addEventListener('change', async e => {
+      const f = e.target.files[0]; if (!f) return;
+      try {
+        const json = JSON.parse(await f.text());
+        if (!confirm('Substituir tudo pelo backup? Depois clique em Salvar para publicar.')) return;
+        S = MIGRATE(json); dirty(); renderTab(); toast('Backup carregado. Clique em Salvar para publicar.');
+      } catch { toast('Arquivo de backup inválido.', true); }
+      e.target.value = '';
+    });
+
+    /* ===================== LOGIN ===================== */
+    function showLogin() { $('app').hidden = true; $('login').hidden = false; }
+    async function showApp() { $('login').hidden = true; $('app').hidden = false; await load(); }
+
+    $('login-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      $('login-error').hidden = true; $('login-btn').textContent = 'Entrando…';
+      const { error } = await sb.auth.signInWithPassword({ email: $('email').value.trim(), password: $('password').value });
+      $('login-btn').textContent = 'Entrar';
+      if (error) { $('login-error').textContent = 'E-mail ou senha incorretos.'; $('login-error').hidden = false; return; }
+      $('password').value = '';
+      showApp();
+    });
+    $('btnLogout').addEventListener('click', async () => {
+      if (isDirty && !confirm('Há alterações não salvas. Sair mesmo assim?')) return;
+      await sb.auth.signOut(); setClean(); showLogin();
+    });
+
+    sb.auth.getSession().then(({ data: { session } }) => session ? showApp() : showLogin());
+  </script>
+</body>
+</html>
