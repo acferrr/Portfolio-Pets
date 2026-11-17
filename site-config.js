@@ -40,7 +40,8 @@ window.SITE_DEFAULT = {
       "sub": "Suplemento alimentar em pó para equinos, formulado com creatina, lisina, vitaminas, minerais e probióticos.",
       "meta": "Meta Ads · Reels", "concept": false,
       "c": "#ff6600", "light": "#ff922c", "deep": "#d33a00",
-      "heroImg": "", "bgImg": "https://images.squarespace-cdn.com/content/v1/6411e067b9dca209f3ee7939/02b5cf12-e3da-491e-9d46-2f1987a2a4ed/Saxon+Warrior+Coolmore+Stud+June+2022-263.jpg",
+      "heroImg": "", "heroImgZoom": 0, "heroImgX": 50, "heroImgY": 50,
+      "bgImg": "https://images.squarespace-cdn.com/content/v1/6411e067b9dca209f3ee7939/02b5cf12-e3da-491e-9d46-2f1987a2a4ed/Saxon+Warrior+Coolmore+Stud+June+2022-263.jpg",
       "bgOpacity": 20, "gradientOpacity": 100,
       "groups": [
         { "name": "Ads", "clips": [
@@ -58,7 +59,8 @@ window.SITE_DEFAULT = {
       "sub": "Fortificante mineral à base de algas para cavalos atletas.",
       "meta": "Meta Ads · Reels", "concept": false,
       "c": "#0049db", "light": "#2c75ff", "deep": "#001daf",
-      "heroImg": "", "bgImg": "https://media.newyorker.com/photos/62a0e6e025b995d6cbae6b55/16:9/w_1280,c_limit/220620_r40567.jpg",
+      "heroImg": "", "heroImgZoom": 0, "heroImgX": 50, "heroImgY": 50,
+      "bgImg": "https://media.newyorker.com/photos/62a0e6e025b995d6cbae6b55/16:9/w_1280,c_limit/220620_r40567.jpg",
       "bgOpacity": 20, "gradientOpacity": 100,
       "groups": [
         { "name": "", "clips": [
@@ -74,7 +76,8 @@ window.SITE_DEFAULT = {
       "sub": "Implante para bovinos de corte, usado na fase de engorda.",
       "meta": "Meta Ads · Reels", "concept": false,
       "c": "#ffc800", "light": "#fff42c", "deep": "#d39c00",
-      "heroImg": "", "bgImg": "https://a-z-animals.com/media/2022/10/Nelore-Cattle.jpg",
+      "heroImg": "", "heroImgZoom": 0, "heroImgX": 50, "heroImgY": 50,
+      "bgImg": "https://a-z-animals.com/media/2022/10/Nelore-Cattle.jpg",
       "bgOpacity": 20, "gradientOpacity": 100,
       "groups": [
         { "name": "", "clips": [
@@ -89,7 +92,8 @@ window.SITE_DEFAULT = {
       "sub": "Marca brasileira de suplementos para cães e gatos, desenvolvida com veterinários e zootecnistas e vendida em todo o país.",
       "meta": "Meta Ads", "concept": false,
       "c": "#204951", "light": "#4c757d", "deep": "#001d25",
-      "heroImg": "", "bgImg": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWi7T8yh8clfsRXl-eH7Cbie7cNaSHC8PTGvwK6I1llCMHPoh2ZsX9x5dv&s=10",
+      "heroImg": "", "heroImgZoom": 0, "heroImgX": 50, "heroImgY": 50,
+      "bgImg": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWi7T8yh8clfsRXl-eH7Cbie7cNaSHC8PTGvwK6I1llCMHPoh2ZsX9x5dv&s=10",
       "bgOpacity": 20, "gradientOpacity": 96,
       "groups": [
         { "name": "", "clips": [

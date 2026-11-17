@@ -83,7 +83,9 @@
       compare: 'Seção: Comparativo', process: 'Seção: Processo', about: 'Seção: Quem faz (fundador)', cta: 'Seção: Chamada final',
       title: 'Título', text: 'Texto', items: 'Itens', id: 'ID (sem espaços)', kicker: 'Nicho', sub: 'Descrição', meta: 'Plataformas',
       concept: 'Projeto conceito', c: 'Cor principal', light: 'Cor clara', deep: 'Cor escura',
-      heroImg: 'Imagem do card no topo', bgImg: 'Imagem de fundo da faixa', bgOpacity: 'Opacidade da imagem', gradientOpacity: 'Opacidade do degradê',
+      heroImg: 'Imagem do card no topo',
+      heroImgZoom: 'Tamanho da imagem do card (0 = automático)', heroImgX: 'Posição horizontal da imagem do card', heroImgY: 'Posição vertical da imagem do card',
+      bgImg: 'Imagem de fundo da faixa', bgOpacity: 'Opacidade da imagem', gradientOpacity: 'Opacidade do degradê',
       groups: 'Grupos de vídeos', name: 'Nome', clips: 'Vídeos', label: 'Rótulo', dur: 'Duração (ex.: 0:25, opcional)',
       src: 'Link do vídeo (YouTube ou MP4)', poster: 'Capa (opcional, o YouTube gera sozinho)', desc: 'Nota interna (não aparece)',
       badge: 'Selo', tag: 'Etiqueta', bullets: 'Tópicos', theirsLabel: 'Nome do lado "comum"', oursLabel: 'Nome do seu lado',
@@ -96,7 +98,7 @@
 
     /* Modelo usado ao clicar em "+ Adicionar" */
     const TEMPLATES = {
-      'clients': { id: '', kicker: '', title: 'Novo cliente', sub: '', meta: 'Meta Ads · Reels', concept: false, c: '#3b5998', light: '#6785c4', deep: '#1e3057', heroImg: '', bgImg: '', bgOpacity: 20, gradientOpacity: 90, groups: [{ name: '', clips: [] }] },
+      'clients': { id: '', kicker: '', title: 'Novo cliente', sub: '', meta: 'Meta Ads · Reels', concept: false, c: '#3b5998', light: '#6785c4', deep: '#1e3057', heroImg: '', heroImgZoom: 0, heroImgX: 50, heroImgY: 50, bgImg: '', bgOpacity: 20, gradientOpacity: 90, groups: [{ name: '', clips: [] }] },
       'groups': { name: '', clips: [] },
       'clips': { label: 'Ad 01', dur: '', src: '', poster: '', desc: '' },
       'audience.items': { title: '', text: '' },
@@ -109,6 +111,19 @@
     const COLOR_KEYS = new Set(['c', 'light', 'deep', 'heroBg']);
     const IMG_RE = /(img|photo|poster)$/i;
     const LONG_KEYS = new Set(['text', 'sub', 'subheadline', 'desc', 'companyText']);
+    const RANGES = { heroImgZoom: [0, 300] };
+
+    /* Garante os controles de imagem do card em clientes antigos */
+    const CLIENT_EXTRA = { heroImgZoom: 0, heroImgX: 50, heroImgY: 50 };
+    function normalizeClients() {
+      state.clients = (state.clients || []).map(c => {
+        if ('heroImgZoom' in c) return c;
+        const out = {};
+        for (const k of Object.keys(c)) { out[k] = c[k]; if (k === 'heroImg') Object.assign(out, CLIENT_EXTRA); }
+        if (!('heroImgZoom' in out)) Object.assign(out, CLIENT_EXTRA);
+        return out;
+      });
+    }
 
     /* ===================== UTILITÁRIOS ===================== */
     function toast(msg, err = false) {
@@ -289,7 +304,8 @@
       if (typeof v === 'number') {
         const row = el('div', 'flex items-center gap-3');
         const inp = el('input');
-        inp.type = 'range'; inp.min = 0; inp.max = 100; inp.value = v;
+        const r = RANGES[k] || [0, 100];
+        inp.type = 'range'; inp.min = r[0]; inp.max = r[1]; inp.value = v;
         const out = el('span', 'text-xs w-12 text-right', `${v}%`);
         inp.addEventListener('input', () => { setAt(path, +inp.value); out.textContent = `${inp.value}%`; });
         row.append(inp, out);
@@ -375,11 +391,13 @@
       if (error) {
         toast('Erro ao carregar: ' + error.message, true);
         state = structuredClone(DEFAULT);
+        normalizeClients();
         render();
         return;
       }
       if (!data || !data.data || !Object.keys(data.data).length) {
         state = structuredClone(DEFAULT);
+        normalizeClients();
         render();
         setDirty(true);
         toast('Primeiro acesso: carreguei o conteúdo atual. Clique em Salvar para publicar.');
@@ -387,6 +405,7 @@
       }
       // Junta com o padrão para que campos e seções novas apareçam no painel
       state = mergeData(DEFAULT, data.data);
+      normalizeClients();
       render();
       setDirty(false);
     }
