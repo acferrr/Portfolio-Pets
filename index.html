@@ -5,116 +5,104 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>ACEFER · Anúncios em vídeo para empresas do mundo animal</title>
   <meta name="description" content="Editor de anúncios em vídeo especializado no mercado animal: cavalos, gado e pet. Criativos para Instagram e Facebook, com roteiro opcional.">
-  <meta name="author" content="Alex Câmara Ferreira">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
   <meta property="og:title" content="ACEFER · Anúncios em vídeo para empresas do mundo animal">
   <meta property="og:description" content="Cavalo, boi ou pet: anúncios em vídeo feitos por quem é especialista no mercado animal.">
   <meta property="og:image" content="https://cdn.myportfolio.com/43dfedde-5847-4bca-b10d-b4857cc8e5b5/62f4da30-6af2-4993-a1dd-c8079eb9cda1_rw_1920.png?h=6c8354a38e28c6fff18fc671e87418bb">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="theme-color" content="#1a3f2d">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231a3f2d'/%3E%3Ctext x='50' y='72' font-size='64' text-anchor='middle' fill='%23e9e2ce' font-family='Georgia,serif' font-weight='700'%3EA%3C/text%3E%3C/svg%3E">
+  <meta name="theme-color" content="#0e0c0a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230e0c0a'/%3E%3Ctext x='50' y='72' font-size='64' text-anchor='middle' fill='%23e9e2ce' font-family='Georgia,serif' font-weight='500'%3EA%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap">
   <script src="site-config.js"></script>
-
+  <script src="engine.js"></script>
   <style>
     :root {
-      --primary: #1a3f2d; --cream: #e9e2ce; --paper: #ffffff;
-      --cream-soft: color-mix(in srgb, var(--cream) 42%, var(--paper));
-      --ink: #16241c; --muted: #5f6c63;
-      --line: color-mix(in srgb, var(--primary) 13%, transparent);
-      --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      --c-bg: #0e0c0a; --c-fg: #e9e2ce; --c-deep: #02100c;
+      --grain-img: none; --grain-size: 300px; --grain-op: .35;
+      --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
       --sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', Inter, 'Segoe UI', Roboto, sans-serif;
-      --ease: cubic-bezier(.2, .8, .2, 1);
-      --cut: clamp(30px, 5.5vw, 80px);
-      --grain-op: .5;
-      --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.10  0 0 0 0 0.22  0 0 0 0 0.16  0 0 0 0.35 0'/></filter><rect width='300' height='300' filter='url(%23n)'/></svg>");
+      --ease: cubic-bezier(.2,.8,.2,1); --cut: clamp(30px, 5.5vw, 80px);
     }
     *, *::before, *::after { box-sizing: border-box; }
     [hidden] { display: none !important; }
     html { scroll-behavior: smooth; }
-    body { margin: 0; font-family: var(--sans); color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; letter-spacing: -0.01em; overflow-x: clip; }
+    body { margin: 0; font-family: var(--sans); background: var(--c-bg); color: var(--c-fg); -webkit-font-smoothing: antialiased; letter-spacing: -0.01em; overflow-x: clip; }
     img { display: block; max-width: 100%; }
     a { color: inherit; text-decoration: none; }
     button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; padding: 0; }
     .container { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+    .it { font-family: var(--serif); font-style: italic; font-weight: 500; }
 
-    /* Aparecer ao rolar */
+    /* Cores por seção */
+    .s-bg   { --sbg: var(--c-bg);   --sfg: var(--c-fg); }
+    .s-deep { --sbg: var(--c-deep); --sfg: var(--c-fg); }
+    .s-cream{ --sbg: var(--c-fg);   --sfg: var(--c-bg); }
+    .s-bg, .s-deep, .s-cream { background-color: var(--sbg); color: var(--sfg);
+      --muted: color-mix(in srgb, var(--sfg) 66%, var(--sbg)); --line: color-mix(in srgb, var(--sfg) 16%, transparent); }
+
+    /* Textura: acima dos fundos e fotos, abaixo de textos e vídeos */
+    .tex { position: relative; isolation: isolate; }
+    .tex::before, .band::after { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background-image: var(--grain-img); background-size: var(--grain-size); opacity: var(--grain-op); }
+    .s-cream.tex::before { filter: invert(1); }
+    .tex > .container, .band > .container { position: relative; z-index: 1; }
+
     [data-reveal] { opacity: 0; transform: translateY(22px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
     [data-reveal].in { opacity: 1; transform: none; }
 
-    /* Fundos e textura */
-    .tex { position: relative; isolation: isolate; }
-    .tex::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-      background-image: var(--grain); background-size: 300px 300px; opacity: var(--grain-op); mix-blend-mode: multiply; }
-    .green.tex::before { mix-blend-mode: soft-light; opacity: calc(var(--grain-op) * 1.4); }
-    .paper { background-color: var(--paper); }
-    .cream { background-color: var(--cream-soft); }
-    .green { background-color: var(--primary); color: var(--cream); }
-
     /* Botões */
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 15px 26px; border-radius: 999px;
-      font-weight: 600; font-size: 15px; letter-spacing: 0; transition: transform .4s var(--ease), box-shadow .4s var(--ease), background .3s, color .3s; }
-    .btn:hover { transform: translateY(-3px); }
-    .btn:active { transform: translateY(0) scale(.98); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 15px 26px; border-radius: 999px; font-weight: 600; font-size: 15px;
+      transition: transform .4s var(--ease), box-shadow .4s var(--ease), background .3s, color .3s; }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 16px 32px -16px rgba(0,0,0,.7); }
+    .btn:active { transform: scale(.98); }
     .btn .ic { width: 17px; height: 17px; }
     .btn .arr { transition: transform .4s var(--ease); }
     .btn:hover .arr { transform: translateX(4px); }
-    .btn-primary { background: var(--primary); color: var(--paper); box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--primary) 70%, transparent); }
-    .btn-primary:hover { box-shadow: 0 18px 34px -14px color-mix(in srgb, var(--primary) 75%, transparent); }
-    .btn-ghost { border: 1.5px solid var(--primary); color: var(--primary); }
-    .btn-ghost:hover { background: var(--primary); color: var(--paper); }
-    .btn-cream { background: var(--cream); color: var(--primary); }
-    .btn-cream:hover { box-shadow: 0 16px 30px -14px rgba(0,0,0,.45); }
+    .btn-primary { background: var(--sfg); color: var(--sbg); }
+    .btn-ghost { border: 1.5px solid var(--sfg); color: var(--sfg); }
+    .btn-ghost:hover { background: var(--sfg); color: var(--sbg); }
     .btn-sm { padding: 11px 18px; font-size: 14px; }
     .btn-block { width: 100%; }
 
-    /* ===== Topo ===== */
+    /* Topo */
     .hero { padding: 22px 0 clamp(60px, 8vw, 96px); }
     .topbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
     .brand { display: flex; align-items: center; gap: 14px; }
-    .avatar { width: 58px; height: 58px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
-      box-shadow: 0 0 0 3px var(--paper), 0 0 0 4.5px var(--primary); transition: transform .5s var(--ease); }
+    .avatar { width: 58px; height: 58px; border-radius: 50%; overflow: hidden; flex-shrink: 0; box-shadow: 0 0 0 3px var(--sbg), 0 0 0 4.5px var(--sfg); transition: transform .5s var(--ease); }
     .avatar:hover { transform: scale(1.07) rotate(-3deg); }
     .avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .brand-name { font-family: var(--serif); font-weight: 800; font-size: 28px; color: var(--primary); line-height: 1; letter-spacing: .01em; }
+    .brand-name { font-family: var(--serif); font-weight: 500; font-size: 28px; line-height: 1; }
     .brand-tag { font-size: 13px; color: var(--muted); margin-top: 5px; }
     .pills { display: flex; flex-wrap: wrap; gap: 8px; }
-    .pill { display: inline-flex; align-items: center; gap: 7px; padding: 9px 15px; border-radius: 999px; font-size: 13px; font-weight: 600;
-      border: 1.5px solid var(--primary); color: var(--primary); transition: all .4s var(--ease); }
-    .pill:hover { background: var(--primary); color: var(--paper); transform: translateY(-2px); }
-    .pill.solid { background: var(--primary); color: var(--paper); }
-    .pill.solid:hover { background: color-mix(in srgb, var(--primary) 82%, #000); }
+    .pill { display: inline-flex; align-items: center; gap: 7px; padding: 9px 15px; border-radius: 999px; font-size: 13px; font-weight: 600; border: 1.5px solid var(--sfg); transition: all .4s var(--ease); }
+    .pill:hover, .pill.solid { background: var(--sfg); color: var(--sbg); }
+    .pill:hover { transform: translateY(-2px); }
     .pill svg { width: 15px; height: 15px; }
-
     .hero-center { text-align: center; padding-top: clamp(40px, 6vw, 70px); display: flex; flex-direction: column; align-items: center; }
-    .headline-wrap { position: relative; max-width: 920px; padding: 0 10px; }
-    h1 { font-family: var(--serif); font-weight: 800; color: var(--primary); font-size: clamp(40px, 7vw, 80px); line-height: 1.02; letter-spacing: -0.015em; margin: 0; text-wrap: balance; }
-    .tag { display: inline-flex; align-items: center; padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 700;
-      box-shadow: 0 8px 16px -8px rgba(0,0,0,.35); transition: transform .5s var(--ease); }
-    .tag-green { background: var(--primary); color: var(--cream); }
-    .tag-cream { background: var(--cream); color: var(--primary); }
+    .headline-wrap { position: relative; max-width: 940px; padding: 0 10px; }
+    h1 { font-family: var(--serif); font-weight: 500; font-size: clamp(40px, 7vw, 82px); line-height: 1.02; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+    .tag { display: inline-flex; align-items: center; padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; transition: transform .5s var(--ease); }
+    .tag-solid { background: var(--sfg); color: var(--sbg); }
+    .tag-line { border: 1.5px solid var(--sfg); }
     .tags-m { display: flex; gap: 10px; justify-content: center; margin-bottom: 16px; }
     .tags-m .t1 { transform: rotate(-4deg); } .tags-m .t2 { transform: rotate(4deg); }
     .tags-d { display: none; }
     @media (min-width: 720px) {
-      .tags-m { display: none; }
-      .tags-d { display: block; }
-      .tags-d .tag { position: absolute; bottom: -36px; }
-      .tags-d .t1 { left: 4%; transform: rotate(-6deg); }
-      .tags-d .t2 { right: 4%; transform: rotate(5deg); }
+      .tags-m { display: none; } .tags-d { display: block; }
+      .tags-d .tag { position: absolute; bottom: -36px; background-color: var(--sbg); }
+      .tags-d .tag-solid { background: var(--sfg); }
+      .tags-d .t1 { left: 4%; transform: rotate(-6deg); } .tags-d .t2 { right: 4%; transform: rotate(5deg); }
       .tags-d .tag:hover { transform: rotate(0) scale(1.07); }
     }
-
     .deck { display: flex; justify-content: center; align-items: center; padding: 12px 0; margin-top: clamp(56px, 7vw, 76px); }
-    .deck-card { position: relative; flex-shrink: 0; width: 96px; height: 124px; border-radius: 18px; border: 2px solid rgba(255,255,255,.95);
-      overflow: hidden; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; text-align: left; color: #fff;
-      transform: rotate(var(--tilt)); transition: transform .55s var(--ease), box-shadow .55s var(--ease);
-      box-shadow: 0 16px 30px -16px rgba(0,0,0,.5); }
+    .deck-card { position: relative; flex-shrink: 0; width: 96px; height: 124px; border-radius: 18px; border: 2px solid var(--c-fg); overflow: hidden; padding: 10px;
+      display: flex; flex-direction: column; justify-content: space-between; text-align: left; color: #fff; transform: rotate(var(--tilt));
+      transition: transform .55s var(--ease), box-shadow .55s var(--ease); box-shadow: 0 16px 30px -16px rgba(0,0,0,.8); }
     .deck-card + .deck-card { margin-left: -12px; }
-    .deck-card:hover, .deck-card:focus-visible { transform: rotate(0) translateY(-14px) scale(1.06); z-index: 40 !important; box-shadow: 0 30px 50px -20px rgba(0,0,0,.55); }
+    .deck-card:hover, .deck-card:focus-visible { transform: rotate(0) translateY(-14px) scale(1.06); z-index: 40 !important; box-shadow: 0 30px 50px -20px rgba(0,0,0,.9); }
     @media (min-width: 640px) { .deck-card { width: 160px; height: 188px; padding: 14px; } .deck-card + .deck-card { margin-left: -16px; } }
     @media (min-width: 900px) { .deck-card { width: 180px; height: 206px; } }
     .deck-img, .deck-shade { position: absolute; inset: 0; }
@@ -122,50 +110,41 @@
     .deck-card:hover .deck-img { transform: scale(1.05); }
     .deck-ph { position: absolute; inset: 0; display: grid; place-items: center; font-size: 34px; opacity: .22; }
     .deck-kicker { position: relative; z-index: 2; align-self: flex-start; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-      font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 3px 7px; border-radius: 999px;
-      background: rgba(0,0,0,.42); backdrop-filter: blur(4px); }
-    .deck-title { position: relative; z-index: 2; font-family: var(--serif); font-weight: 800; font-size: 14px; line-height: 1.08; text-shadow: 0 1px 10px rgba(0,0,0,.35); }
-    @media (min-width: 640px) { .deck-kicker { font-size: 10px; padding: 4px 9px; } .deck-title { font-size: 20px; } }
+      font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 3px 7px; border-radius: 999px; background: rgba(0,0,0,.45); }
+    .deck-title { position: relative; z-index: 2; font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 15px; line-height: 1.08; text-shadow: 0 1px 10px rgba(0,0,0,.4); }
+    @media (min-width: 640px) { .deck-kicker { font-size: 10px; padding: 4px 9px; } .deck-title { font-size: 21px; } }
     .deck-hint { font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: 16px; }
     .sub-head { max-width: 640px; margin: 28px auto 0; font-size: clamp(15px, 1.6vw, 17px); line-height: 1.65; color: var(--muted); }
     .cta-row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 28px; }
 
-    /* ===== Seções ===== */
+    /* Seções */
     .sec { padding: clamp(64px, 9vw, 112px) 0; }
     .sec-head { margin-bottom: clamp(28px, 4vw, 46px); }
     .sec-center { text-align: center; }
     .sec-center .title, .sec-center .lead { margin-left: auto; margin-right: auto; }
-    .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--primary); }
+    .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; opacity: .85; }
     .eyebrow::before { content: ''; width: 22px; height: 1.5px; background: currentColor; opacity: .6; }
-    .green .eyebrow { color: var(--cream); }
-    .title { font-family: var(--serif); font-weight: 800; font-size: clamp(32px, 4.6vw, 54px); line-height: 1.06; margin: 14px 0 0; color: var(--primary); max-width: 22ch; text-wrap: balance; }
-    .green .title { color: var(--cream); }
+    .title { font-family: var(--serif); font-weight: 500; font-size: clamp(32px, 4.6vw, 56px); line-height: 1.06; letter-spacing: -0.015em; margin: 14px 0 0; max-width: 22ch; text-wrap: balance; }
     .lead { color: var(--muted); font-size: 16px; line-height: 1.7; max-width: 64ch; margin: 16px 0 0; white-space: pre-line; }
-    .green .lead { color: color-mix(in srgb, var(--cream) 82%, transparent); }
-
     .grid2, .grid3, .grid4 { display: grid; gap: 18px; }
     @media (min-width: 760px) { .grid2 { grid-template-columns: repeat(2, 1fr); } .grid3 { grid-template-columns: repeat(3, 1fr); } }
     @media (min-width: 640px) { .grid4 { grid-template-columns: repeat(2, 1fr); } }
     @media (min-width: 1000px) { .grid4 { grid-template-columns: repeat(4, 1fr); } }
-
-    .box { background: var(--paper); border: 1px solid var(--line); border-radius: 22px; padding: 26px;
+    .box { background: color-mix(in srgb, var(--sfg) 4%, var(--sbg)); border: 1px solid var(--line); border-radius: 22px; padding: 26px;
       transition: transform .5s var(--ease), box-shadow .5s var(--ease), border-color .35s; }
-    .box:hover { transform: translateY(-5px); border-color: color-mix(in srgb, var(--primary) 38%, transparent);
-      box-shadow: 0 22px 44px -20px color-mix(in srgb, var(--primary) 40%, transparent); }
-    .box h3 { font-family: var(--serif); font-weight: 800; font-size: clamp(22px, 2.4vw, 28px); color: var(--primary); margin: 0; line-height: 1.12; }
+    .box:hover { transform: translateY(-5px); border-color: color-mix(in srgb, var(--sfg) 42%, transparent); box-shadow: 0 24px 46px -22px rgba(0,0,0,.75); }
+    .box h3 { font-family: var(--serif); font-weight: 500; font-size: clamp(22px, 2.4vw, 28px); margin: 0; line-height: 1.12; }
     .box p { color: var(--muted); line-height: 1.65; margin: 10px 0 0; }
-
     .checks { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 11px; }
-    .checks li { display: flex; gap: 11px; align-items: flex-start; font-size: 15px; line-height: 1.45; }
-    .checks li::before { content: ''; flex-shrink: 0; width: 20px; height: 20px; margin-top: 1px; border-radius: 50%;
-      background: var(--primary) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e9e2ce' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 12px no-repeat; }
+    .checks li { position: relative; padding-left: 31px; font-size: 15px; line-height: 1.45; }
+    .checks li::before { content: ''; position: absolute; left: 0; top: 1px; width: 20px; height: 20px; border-radius: 50%; background: var(--sfg); }
+    .checks li::after { content: ''; position: absolute; left: 7px; top: 5px; width: 6px; height: 10px; border: solid var(--sbg); border-width: 0 2.4px 2.4px 0; transform: rotate(45deg); }
 
-    /* ===== Faixas dos clientes ===== */
+    /* Faixas dos clientes */
     #cases { position: relative; z-index: 2; margin-bottom: calc(var(--cut) * -1); }
     main > #cases:last-child { margin-bottom: 0; }
     #cases + .sec { padding-top: calc(clamp(64px, 9vw, 112px) + var(--cut)); }
-    .band { position: relative; isolation: isolate; background: var(--c); color: #fff;
-      padding-top: calc(var(--cut) + clamp(38px, 5vw, 66px)); padding-bottom: calc(var(--cut) + 64px); }
+    .band { position: relative; isolation: isolate; background: var(--c); color: #fff; padding-top: calc(var(--cut) + clamp(38px, 5vw, 66px)); padding-bottom: calc(var(--cut) + 64px); }
     .band + .band { margin-top: calc(var(--cut) * -1); }
     .band:first-of-type { padding-top: clamp(56px, 7vw, 88px); }
     .band:nth-of-type(odd)  { clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), 0 100%); }
@@ -173,45 +152,42 @@
     .band-img { position: absolute; inset: 0; z-index: -2; background-size: cover; background-position: center; opacity: var(--bg-op, .2); pointer-events: none; }
     .band-grad { position: absolute; inset: 0; z-index: -1; pointer-events: none;
       background-image: radial-gradient(65% 75% at 84% 25%, var(--c-light), transparent 70%), radial-gradient(55% 65% at 60% 95%, var(--c-deep), transparent 74%);
-      opacity: var(--grad-op, .6);
-      -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,.25) 0%, #000 68%); mask-image: linear-gradient(to right, rgba(0,0,0,.25) 0%, #000 68%); }
+      opacity: var(--grad-op, .6); -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,.25), #000 68%); mask-image: linear-gradient(to right, rgba(0,0,0,.25), #000 68%); }
     .band-grid { display: grid; gap: 32px; align-items: center; }
     @media (min-width: 1000px) { .band-grid { grid-template-columns: 5fr 7fr; gap: 48px; } .band.flip .band-text { order: 2; } }
-    .band-kicker { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; opacity: .88; }
+    .band-kicker { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; opacity: .9; }
     .band-concept { padding: 3px 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,.5); letter-spacing: .06em; }
-    .band h2 { font-family: var(--serif); font-weight: 800; font-size: clamp(36px, 5vw, 62px); line-height: .98; margin: 12px 0; }
-    .band-sub { font-size: clamp(16px, 1.7vw, 19px); line-height: 1.5; opacity: .92; max-width: 44ch; margin: 0; }
+    .band-logo { margin: 18px 0 8px; transition: scale .6s var(--ease); }
+    .band-logo img { width: 100%; height: auto; }
+    .band-text:hover .band-logo { scale: 1.03; }
+    .band h2 { font-family: var(--serif); font-weight: 500; font-size: clamp(36px, 5vw, 62px); line-height: .98; letter-spacing: -0.015em; margin: 12px 0; }
+    .band-sub { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: clamp(17px, 1.8vw, 21px); line-height: 1.45; opacity: .94; max-width: 44ch; margin: 10px 0 0; }
     .band-meta { margin-top: 14px; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; opacity: .75; }
-    .reel { display: flex; flex-wrap: nowrap; align-items: flex-end; gap: 14px; overflow-x: auto; padding: 10px 2px 16px;
-      scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.4) transparent; }
-    .reel::-webkit-scrollbar { height: 5px; }
-    .reel::-webkit-scrollbar-thumb { background: rgba(255,255,255,.4); border-radius: 99px; }
-    @media (max-width: 860px) { .reel { margin-inline: -20px; padding-inline: 20px; scroll-padding-inline: 20px; } .reel::after { content: ''; flex: 0 0 24px; } }
+    .reel { display: flex; flex-wrap: nowrap; align-items: flex-end; gap: 14px; overflow-x: auto; padding: 10px 2px 16px; scroll-snap-type: x proximity; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.4) transparent; }
+    @media (max-width: 860px) { .reel { margin-inline: -20px; padding-inline: 20px; } .reel::after { content: ''; flex: 0 0 24px; } }
     .group { display: flex; flex-direction: column; flex-shrink: 0; }
     .group-name { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; opacity: .88; margin-bottom: 8px; }
     .group-row { display: flex; gap: 14px; }
 
     /* Vídeos */
     .v916 { aspect-ratio: 9 / 16; } .v169 { aspect-ratio: 16 / 9; } .v11 { aspect-ratio: 1 / 1; }
-    .vid { position: relative; display: block; width: 100%; overflow: hidden; border-radius: 16px; cursor: pointer;
-      background: var(--poster, none) center / cover no-repeat, linear-gradient(165deg, var(--c-light, #2f5a45), var(--c-deep, #0f2a1d));
+    .vid { position: relative; z-index: 1; display: block; width: 100%; overflow: hidden; border-radius: 16px; cursor: pointer;
+      background: var(--poster, none) center / cover no-repeat, linear-gradient(165deg, var(--c-light, #2a2622), var(--c-deep, #02100c));
       border: 1px solid rgba(255,255,255,.28); transition: transform .5s var(--ease), box-shadow .5s var(--ease), border-color .35s; }
-    .vid:hover { transform: translateY(-7px); border-color: rgba(255,255,255,.85); box-shadow: 0 24px 44px -20px rgba(0,0,0,.6); }
+    .vid:hover { transform: translateY(-7px); border-color: rgba(255,255,255,.85); box-shadow: 0 24px 44px -20px rgba(0,0,0,.8); }
     .reel .vid { flex: 0 0 clamp(164px, 43vw, 204px); width: auto; scroll-snap-align: start; }
-    .vid .lbl { position: absolute; top: 12px; left: 12px; z-index: 2; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
-      padding: 3px 8px; border-radius: 7px; background: rgba(0,0,0,.45); color: #fff; }
-    .vid .play { position: absolute; inset: 0; margin: auto; width: 54px; height: 54px; border-radius: 50%; background: rgba(255,255,255,.96);
-      display: grid; place-items: center; z-index: 2; transition: transform .5s var(--ease), box-shadow .5s; box-shadow: 0 8px 20px rgba(0,0,0,.25); }
+    .vid .lbl { position: absolute; top: 12px; left: 12px; z-index: 2; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 7px; background: rgba(0,0,0,.5); color: #fff; }
+    .vid .play { position: absolute; inset: 0; margin: auto; width: 54px; height: 54px; border-radius: 50%; background: rgba(255,255,255,.96); display: grid; place-items: center; z-index: 2; transition: transform .5s var(--ease); }
     .vid:hover .play { transform: scale(1.14); }
-    .vid .play::after { content: ''; margin-left: 4px; border-style: solid; border-width: 9px 0 9px 15px; border-color: transparent transparent transparent var(--tri, var(--primary)); }
-    .vid .dur { position: absolute; right: 12px; bottom: 12px; z-index: 2; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: rgba(0,0,0,.45); color: #fff; }
+    .vid .play::after { content: ''; margin-left: 4px; border-style: solid; border-width: 9px 0 9px 15px; border-color: transparent transparent transparent var(--tri, #0e0c0a); }
+    .vid .dur { position: absolute; right: 12px; bottom: 12px; z-index: 2; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: rgba(0,0,0,.5); color: #fff; }
     .vid.playing { cursor: default; transform: none !important; }
     .vid iframe, .vid video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; object-fit: cover; }
 
     /* Depoimentos */
-    .quote { font-family: var(--serif); font-size: 46px; line-height: .6; color: var(--primary); opacity: .35; height: 22px; }
-    .t-text { font-size: 16px; line-height: 1.65; color: var(--ink); margin: 12px 0 0; }
-    .t-name { font-family: var(--serif); font-weight: 800; font-size: 20px; color: var(--primary); margin-top: 18px; }
+    .quote { font-family: var(--serif); font-size: 50px; line-height: .6; opacity: .4; height: 22px; }
+    .t-text { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 18px; line-height: 1.55; margin: 12px 0 0; }
+    .t-name { font-family: var(--serif); font-weight: 500; font-size: 20px; margin-top: 18px; }
     .t-role { font-size: 13px; color: var(--muted); }
     .t-vid { max-width: 220px; margin: 0 auto 16px; }
 
@@ -219,100 +195,93 @@
     .plans { display: grid; gap: 22px; max-width: 940px; margin: 0 auto; }
     @media (min-width: 760px) { .plans { grid-template-columns: repeat(2, 1fr); } }
     .plan { display: flex; flex-direction: column; padding: 30px; border-radius: 26px; }
-    .plan .ptag { align-self: flex-start; font-size: 12px; font-weight: 700; letter-spacing: .03em; padding: 6px 12px; border-radius: 999px;
-      background: var(--cream); color: var(--primary); }
-    .plan h3 { margin-top: 16px; font-size: clamp(28px, 3vw, 36px); }
+    .plan .ptag { align-self: flex-start; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 999px; border: 1.5px solid var(--sfg); }
+    .plan h3 { margin-top: 16px; font-size: clamp(28px, 3vw, 38px); }
     .plan .spacer { flex: 1; min-height: 24px; }
-    .plan.hl { background: var(--primary); border-color: var(--primary); color: var(--cream); }
-    .plan.hl h3 { color: var(--cream); }
-    .plan.hl p { color: color-mix(in srgb, var(--cream) 82%, transparent); }
-    .plan.hl .checks li::before { background: var(--cream) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231a3f2d' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 12px no-repeat; }
-    .plan.hl .btn-primary { background: var(--cream); color: var(--primary); }
+    .plan.hl { background: var(--sfg); color: var(--sbg); border-color: var(--sfg); }
+    .plan.hl p { color: color-mix(in srgb, var(--sbg) 72%, var(--sfg)); }
+    .plan.hl .ptag { border-color: var(--sbg); }
+    .plan.hl .btn-primary { background: var(--sbg); color: var(--sfg); }
+    .plan.hl .checks li::before { background: var(--sbg); }
+    .plan.hl .checks li::after { border-color: var(--sfg); }
     .attn-row { display: flex; justify-content: center; max-height: 0; opacity: 0; overflow: hidden; transition: max-height .7s var(--ease), opacity .5s, margin .7s var(--ease); }
-    .attn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 999px; background: var(--primary); color: var(--cream);
-      font-weight: 700; font-size: 15px; box-shadow: 0 14px 30px -14px color-mix(in srgb, var(--primary) 80%, transparent); }
+    .attn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 999px; background: var(--sfg); color: var(--sbg); font-weight: 700; font-size: 15px; }
     .attn .ar { display: inline-block; animation: bob 1.2s ease-in-out infinite; }
     .show .attn-row { max-height: 90px; opacity: 1; margin: -12px 0 28px; }
     .show .attn { animation: pop .7s var(--ease) both; }
     .pulse .plan { animation: ring 1.6s var(--ease) 2; }
     @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
     @keyframes pop { from { transform: translateY(-10px) scale(.94); } to { transform: none; } }
-    @keyframes ring { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 45%, transparent); } 100% { box-shadow: 0 0 0 18px transparent; } }
+    @keyframes ring { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--sfg) 45%, transparent); } 100% { box-shadow: 0 0 0 18px transparent; } }
 
     /* Comparativo */
     .cmp { display: grid; gap: 26px; }
     @media (min-width: 760px) { .cmp { grid-template-columns: 1fr 1fr; } }
     .cmp-col { border-top: 2px solid var(--line); padding-top: 22px; }
-    .cmp-col.ours { border-top-color: var(--primary); }
-    .cmp-col h3 { font-family: var(--serif); font-weight: 800; font-size: 26px; margin: 0; color: var(--muted); }
-    .cmp-col.ours h3 { color: var(--primary); }
+    .cmp-col.ours { border-top-color: var(--sfg); }
+    .cmp-col h3 { font-family: var(--serif); font-weight: 500; font-size: 26px; margin: 0; }
+    .cmp-col.theirs h3, .cmp-col.theirs li { color: var(--muted); }
     .cmp-col ul { list-style: none; padding: 0; margin: 14px 0 0; }
-    .cmp-col li { display: flex; gap: 12px; padding: 15px 8px; border-bottom: 1px solid var(--line); font-size: 15px; line-height: 1.45;
-      border-radius: 10px; transition: background .35s, padding-left .45s var(--ease); }
-    .cmp-col li:hover { background: color-mix(in srgb, var(--primary) 6%, transparent); padding-left: 14px; }
-    .cmp-col.theirs li { color: var(--muted); }
-    .cmp-col .ok { color: var(--primary); font-weight: 800; }
+    .cmp-col li { display: flex; gap: 12px; padding: 15px 8px; border-bottom: 1px solid var(--line); font-size: 15px; line-height: 1.45; border-radius: 10px; transition: background .35s, padding-left .45s var(--ease); }
+    .cmp-col li:hover { background: color-mix(in srgb, var(--sfg) 6%, transparent); padding-left: 14px; }
+    .ok { font-weight: 800; }
 
     /* Processo */
-    .num { font-family: var(--serif); font-weight: 900; font-size: 46px; line-height: 1; color: var(--primary); opacity: .9; }
+    .num { font-family: var(--serif); font-weight: 500; font-size: 48px; line-height: 1; opacity: .9; }
     .box .num + h3 { margin-top: 12px; font-size: 24px; }
 
     /* Quem faz */
     .about { display: grid; gap: 44px; align-items: start; }
     @media (min-width: 860px) { .about { grid-template-columns: minmax(0, 380px) 1fr; } }
     .photo { position: relative; isolation: isolate; margin-right: 16px; }
-    .photo::after { content: ''; position: absolute; inset: 16px -16px -16px 16px; border: 1.5px solid var(--primary); border-radius: 24px; z-index: -1; transition: transform .6s var(--ease); }
+    .photo::after { content: ''; position: absolute; inset: 16px -16px -16px 16px; border: 1.5px solid var(--sfg); border-radius: 24px; z-index: -1; transition: transform .6s var(--ease); }
     .photo:hover::after { transform: translate(-7px, -7px); }
     .photo .frame { aspect-ratio: 4 / 5; border-radius: 24px; overflow: hidden; }
     .photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .9s var(--ease); }
     .photo:hover img { transform: scale(1.05); }
-    .a-name { font-family: var(--serif); font-weight: 800; font-size: clamp(34px, 4vw, 48px); color: var(--primary); margin: 0; line-height: 1; }
-    .a-role { font-weight: 600; color: var(--primary); opacity: .82; margin-top: 10px; }
+    .a-name { font-family: var(--serif); font-weight: 500; font-size: clamp(34px, 4vw, 50px); margin: 0; line-height: 1; }
+    .a-role { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 18px; opacity: .85; margin-top: 10px; }
     .a-origin { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); font-size: 14px; margin-top: 10px; }
     .a-origin svg { width: 16px; height: 16px; }
-    .a-text { margin: 20px 0 0; font-size: 16px; line-height: 1.7; color: var(--ink); max-width: 62ch; }
+    .a-text { margin: 20px 0 0; font-size: 16px; line-height: 1.7; max-width: 62ch; }
     .small-label { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: 24px; }
     .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-    .chip { padding: 7px 14px; border-radius: 999px; border: 1.5px solid var(--line); font-size: 13px; font-weight: 600; color: var(--primary); transition: all .35s var(--ease); }
-    .chip:hover { border-color: var(--primary); background: var(--primary); color: var(--paper); transform: translateY(-2px); }
-    .company { margin-top: 28px; padding: 26px; border-radius: 22px; background: var(--primary); color: var(--cream); transition: transform .5s var(--ease), box-shadow .5s; }
-    .company:hover { transform: translateY(-4px); box-shadow: 0 22px 40px -20px color-mix(in srgb, var(--primary) 80%, transparent); }
-    .company h4 { font-family: var(--serif); font-weight: 800; font-size: 26px; margin: 0; }
-    .company p { margin: 8px 0 0; line-height: 1.65; color: color-mix(in srgb, var(--cream) 85%, transparent); }
+    .chip { padding: 7px 14px; border-radius: 999px; border: 1.5px solid var(--line); font-size: 13px; font-weight: 600; transition: all .35s var(--ease); }
+    .chip:hover { border-color: var(--sfg); background: var(--sfg); color: var(--sbg); transform: translateY(-2px); }
+    .company { margin-top: 28px; padding: 26px; border-radius: 22px; background: var(--sfg); color: var(--sbg); transition: transform .5s var(--ease), box-shadow .5s; }
+    .company:hover { transform: translateY(-4px); box-shadow: 0 22px 40px -20px rgba(0,0,0,.8); }
+    .company h4 { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 26px; margin: 0; }
+    .company p { margin: 8px 0 0; line-height: 1.65; opacity: .85; }
 
-    /* Chamada final */
     .final .title { font-size: clamp(36px, 5.6vw, 68px); max-width: 18ch; }
     .final .cta-row { justify-content: flex-start; margin-top: 34px; }
 
     /* Seções personalizadas */
     .media-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
     .media-grid.has-vert { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
-    .media .pic { overflow: hidden; border-radius: 18px; border: 1px solid var(--line); background: var(--cream-soft); }
+    .media { position: relative; z-index: 1; }
+    .media .pic { overflow: hidden; border-radius: 18px; border: 1px solid var(--line); }
     .media .pic img { width: 100%; height: 100%; object-fit: cover; transition: transform .9s var(--ease); }
     .media:hover .pic img { transform: scale(1.05); }
     .media .cap { font-size: 13px; color: var(--muted); margin-top: 9px; }
-    .green .media .cap { color: color-mix(in srgb, var(--cream) 80%, transparent); }
 
     /* Rodapé */
     .footer { padding: 60px 0 36px; }
     .f-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 26px; align-items: flex-end; }
-    .f-brand { font-family: var(--serif); font-weight: 800; font-size: clamp(36px, 4.4vw, 50px); line-height: 1; }
-    .f-tag { margin-top: 8px; color: color-mix(in srgb, var(--cream) 75%, transparent); font-size: 14px; }
+    .f-brand { font-family: var(--serif); font-weight: 500; font-size: clamp(36px, 4.4vw, 52px); line-height: 1; }
+    .f-tag { margin-top: 8px; color: var(--muted); font-size: 14px; }
     .f-links { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
     @media (min-width: 640px) { .f-links { align-items: flex-end; } }
     .ulink { position: relative; font-weight: 600; }
-    .ulink::after { content: ''; position: absolute; left: 0; right: 0; bottom: -3px; height: 1.5px; background: currentColor;
-      transform: scaleX(0); transform-origin: right; transition: transform .45s var(--ease); }
+    .ulink::after { content: ''; position: absolute; left: 0; right: 0; bottom: -3px; height: 1.5px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform .45s var(--ease); }
     .ulink:hover::after { transform: scaleX(1); transform-origin: left; }
-    .f-bottom { margin-top: 36px; padding-top: 20px; border-top: 1px solid color-mix(in srgb, var(--cream) 20%, transparent);
-      display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; font-size: 13px; }
+    .f-bottom { margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; font-size: 13px; }
     .f-nav { display: flex; flex-wrap: wrap; gap: 22px; }
-    .f-copy { color: color-mix(in srgb, var(--cream) 60%, transparent); }
+    .f-copy { color: var(--muted); }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { transition: none !important; animation: none !important; }
-      html { scroll-behavior: auto; }
-      [data-reveal] { opacity: 1; transform: none; }
+      html { scroll-behavior: auto; } [data-reveal] { opacity: 1; transform: none; }
     }
   </style>
 </head>
@@ -324,101 +293,71 @@
     <symbol id="i-pin" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 21s-7-6.2-7-11a7 7 0 1114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
   </svg>
 
-  <header id="hero" class="hero tex paper"></header>
+  <header id="hero" class="hero tex s-bg"></header>
   <main id="conteudo"></main>
-  <footer id="contato" class="footer tex green"></footer>
+  <footer id="contato" class="footer tex s-deep"></footer>
 
   <script>
     const CFG = window.SITE_CONFIG || {};
     const $ = id => document.getElementById(id);
     const list = a => Array.isArray(a) ? a : [];
     const has = s => Boolean(s && String(s).trim());
-    function esc(s) {
-      if (s === null || s === undefined) return '';
-      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-    }
-    function ytId(url) {
-      const m = String(url || '').match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/i);
-      return m ? m[1] : '';
-    }
-    function playerUrl(url) {
-      const id = ytId(url);
-      return id ? { type: 'youtube', src: `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&autoplay=1&playsinline=1` } : { type: 'mp4', src: url };
-    }
-    function posterOf(x) {
-      if (has(x.poster)) return x.poster;
-      const id = ytId(x.src);
-      return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : '';
-    }
+    const esc = s => (s === null || s === undefined) ? '' : String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    const ytId = u => { const m = String(u || '').match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/i); return m ? m[1] : ''; };
+    const playerUrl = u => { const id = ytId(u); return id ? { type: 'youtube', src: `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&autoplay=1&playsinline=1` } : { type: 'mp4', src: u }; };
+    const posterOf = x => has(x.poster) ? x.poster : (ytId(x.src) ? `https://img.youtube.com/vi/${ytId(x.src)}/hqdefault.jpg` : '');
 
-    let D = null;
-    let PLANS = [];
+    let D = null, PLANS = [];
 
     function applyTheme(t) {
       const r = document.documentElement.style;
-      if (t.primary) r.setProperty('--primary', t.primary);
-      if (t.cream) r.setProperty('--cream', t.cream);
-      if (t.paper) r.setProperty('--paper', t.paper);
-      r.setProperty('--grain-op', t.texture === false ? '0' : ((t.textureStrength ?? 50) / 100).toFixed(2));
+      r.setProperty('--c-bg', t.bg || '#0e0c0a');
+      r.setProperty('--c-fg', t.fg || '#e9e2ce');
+      r.setProperty('--c-deep', t.deep || '#02100c');
+      const T = window.SITE_TEXTURE(t.texture, t.textureColor, t.textureIntensity, t.textureSize);
+      r.setProperty('--grain-img', T.img);
+      r.setProperty('--grain-size', T.size);
+      r.setProperty('--grain-op', ((t.textureOpacity ?? 35) / 100).toFixed(2));
     }
-
     function waLink(msg) {
       const base = (D && D.contact && D.contact.whatsapp) || '';
-      if (!msg) return base;
-      return base + (base.includes('?') ? '&' : '?') + 'text=' + encodeURIComponent(msg);
+      return msg ? base + (base.includes('?') ? '&' : '?') + 'text=' + encodeURIComponent(msg) : base;
     }
-
     function vidTile({ src, poster, label, dur, light, deep, ratio = 'v916', aria }) {
       const style = (light ? `--c-light:${esc(light)};--c-deep:${esc(deep)};--tri:${esc(deep)};` : '') + (poster ? `--poster:url('${esc(poster)}');` : '');
-      return `<button type="button" class="vid ${ratio}" data-src="${esc(src)}" data-poster="${esc(poster)}" aria-label="${esc(aria)}" style="${style}">
-        ${has(label) ? `<span class="lbl">${esc(label)}</span>` : ''}
-        <span class="play" aria-hidden="true"></span>
-        ${/^\d+:\d{2}$/.test(dur || '') ? `<span class="dur">${esc(dur)}</span>` : ''}
-      </button>`;
+      return `<button type="button" class="vid ${ratio}" data-src="${esc(src)}" aria-label="${esc(aria)}" style="${style}">
+        ${has(label) ? `<span class="lbl">${esc(label)}</span>` : ''}<span class="play" aria-hidden="true"></span>
+        ${/^\d+:\d{2}$/.test(dur || '') ? `<span class="dur">${esc(dur)}</span>` : ''}</button>`;
     }
-
-    function visibleClients(d) {
-      return list(d.clients).map(c => ({
-        ...c,
-        groups: list(c.groups).map(g => ({ ...g, clips: list(g.clips).filter(cl => has(cl.src)) })).filter(g => g.clips.length)
-      })).filter(c => c.groups.length);
-    }
+    const visibleClients = d => list(d.clients).map(c => ({ ...c,
+      groups: list(c.groups).map(g => ({ ...g, clips: list(g.clips).filter(cl => has(cl.src)) })).filter(g => g.clips.length) })).filter(c => c.groups.length);
     const isOn = (d, key) => list(d.layout).some(l => l.key === key && l.on);
+    const head = (eb, title, text, center) => (has(eb) || has(title) || has(text)) ? `
+      <div class="sec-head ${center ? 'sec-center' : ''}" data-reveal>
+        ${has(eb) ? `<span class="eyebrow">${esc(eb)}</span>` : ''}${has(title) ? `<h2 class="title">${esc(title)}</h2>` : ''}${has(text) ? `<p class="lead">${esc(text)}</p>` : ''}
+      </div>` : '';
+    const waBtn = (cls, text) => `<a class="btn ${cls}" href="#orcamento" data-go="orcamento"><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg>${esc(text)}<span class="arr">→</span></a>`;
 
-    /* ---------- Topo ---------- */
     function heroHTML(d, clients, clientsOn) {
       const b = d.brand || {}, c = d.contact || {}, h = d.hero || {};
-      const insta = String(c.instagram || '').replace(/^@/, '');
-      const iu = `https://instagram.com/${insta}`;
-      const t1 = h.showInstaBadge !== false && insta ? `<a class="tag tag-green t1" href="${iu}" target="_blank" rel="noopener">@${esc(insta)}</a>` : '';
-      const t2 = has(h.badgeRight) ? `<span class="tag tag-cream t2">${esc(h.badgeRight)}</span>` : '';
-      const angles = [-6, -2, 2, 6];
-      const deck = clientsOn ? `
-        <nav class="deck" aria-label="Clientes">
-          ${clients.map((cl, i) => {
-            const o = (cl.heroOverlay ?? 55) / 100, z = Number(cl.heroImgZoom) || 0;
-            const img = has(cl.heroImg)
-              ? `<div class="deck-img" style="background-image:url('${esc(cl.heroImg)}');background-size:${z ? z + '% auto' : 'cover'};background-position:${cl.heroImgX ?? 50}% ${cl.heroImgY ?? 50}%"></div>` +
-                (o > 0 ? `<div class="deck-shade" style="background:linear-gradient(to top, rgba(0,0,0,${(o * .85).toFixed(2)}) 0%, rgba(0,0,0,${(o * .3).toFixed(2)}) 55%, rgba(0,0,0,${(o * .12).toFixed(2)}) 100%)"></div>` : '')
-              : '<div class="deck-ph" aria-hidden="true">▶</div>';
-            return `<a class="deck-card" href="#band-${i}" aria-label="Ver vídeos de ${esc(cl.title)}"
-                style="--tilt:${angles[i % angles.length]}deg;background:linear-gradient(155deg, ${esc(cl.light)} 0%, ${esc(cl.c)} 54%, ${esc(cl.deep)} 100%);z-index:${10 + i}">
-                ${img}
-                <span class="deck-kicker">${esc(cl.kicker)}</span>
-                <span class="deck-title" ${cl.showTitle === false ? 'style="visibility:hidden"' : ''}>${esc(cl.title)}</span>
-              </a>`;
-          }).join('')}
-        </nav>
-        ${has(h.deckHint) ? `<div class="deck-hint">${esc(h.deckHint)}</div>` : ''}` : '';
-
+      const insta = String(c.instagram || '').replace(/^@/, ''), iu = `https://instagram.com/${insta}`;
+      const t1 = h.showInstaBadge !== false && insta ? `<a class="tag tag-solid t1" href="${iu}" target="_blank" rel="noopener">@${esc(insta)}</a>` : '';
+      const t2 = has(h.badgeRight) ? `<span class="tag tag-line t2">${esc(h.badgeRight)}</span>` : '';
+      const ang = [-6, -2, 2, 6];
+      const deck = clientsOn ? `<nav class="deck" aria-label="Clientes">${clients.map((cl, i) => {
+        const o = (cl.heroOverlay ?? 55) / 100, z = +cl.heroImgZoom || 0;
+        const img = has(cl.heroImg)
+          ? `<div class="deck-img" style="background-image:url('${esc(cl.heroImg)}');background-size:${z ? z + '% auto' : 'cover'};background-position:${cl.heroImgX ?? 50}% ${cl.heroImgY ?? 50}%"></div>` +
+            (o > 0 ? `<div class="deck-shade" style="background:linear-gradient(to top, rgba(0,0,0,${(o * .85).toFixed(2)}), rgba(0,0,0,${(o * .3).toFixed(2)}) 55%, rgba(0,0,0,${(o * .12).toFixed(2)}))"></div>` : '')
+          : '<div class="deck-ph" aria-hidden="true">▶</div>';
+        return `<a class="deck-card" href="#band-${i}" aria-label="Ver vídeos de ${esc(cl.title)}" style="--tilt:${ang[i % 4]}deg;background:linear-gradient(155deg, ${esc(cl.light)}, ${esc(cl.c)} 54%, ${esc(cl.deep)});z-index:${10 + i}">
+          ${img}<span class="deck-kicker">${esc(cl.kicker)}</span><span class="deck-title"${cl.showTitle === false ? ' style="visibility:hidden"' : ''}>${esc(cl.title)}</span></a>`;
+      }).join('')}</nav>${has(h.deckHint) ? `<div class="deck-hint">${esc(h.deckHint)}</div>` : ''}` : '';
       return `<div class="container">
         <div class="topbar">
           <div class="brand">
-            ${has(b.profileImg) ? `<a class="avatar" href="${iu}" target="_blank" rel="noopener" title="Instagram"><img src="${esc(b.profileImg)}" alt="${esc((d.about && d.about.name) || b.name)}"></a>` : ''}
-            <div>
-              <div class="brand-name">${esc(b.name)}</div>
-              ${has(b.tagline) ? `<div class="brand-tag">${esc(b.tagline)}</div>` : ''}
-            </div>
+            ${has(b.profileImg) ? `<a class="avatar" href="${iu}" target="_blank" rel="noopener"><img src="${esc(b.profileImg)}" alt="${esc(b.name)}"></a>` : ''}
+            <div><div class="brand-name">${esc(b.name)}</div>${has(b.tagline) ? `<div class="brand-tag">${esc(b.tagline)}</div>` : ''}</div>
           </div>
           <div class="pills">
             ${has(c.email) ? `<a class="pill" href="mailto:${esc(c.email)}"><svg aria-hidden="true"><use href="#i-mail"/></svg>${esc(c.email)}</a>` : ''}
@@ -426,306 +365,195 @@
           </div>
         </div>
         <div class="hero-center">
-          <div class="headline-wrap">
-            ${t1 || t2 ? `<div class="tags-m">${t1}${t2}</div>` : ''}
-            <h1>${esc(h.headline)}</h1>
-            ${t1 || t2 ? `<div class="tags-d">${t1}${t2}</div>` : ''}
-          </div>
+          <div class="headline-wrap">${t1 || t2 ? `<div class="tags-m">${t1}${t2}</div>` : ''}<h1>${esc(h.headline)}</h1>${t1 || t2 ? `<div class="tags-d">${t1}${t2}</div>` : ''}</div>
           ${deck}
           ${has(h.subheadline) ? `<p class="sub-head">${esc(h.subheadline)}</p>` : ''}
-          <div class="cta-row">
-            <a class="btn btn-primary" href="#orcamento" data-go="orcamento"><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg>${esc(h.ctaPrimary || 'Solicitar orçamento')}</a>
-            ${clientsOn && has(h.ctaSecondary) ? `<a class="btn btn-ghost" href="#cases">${esc(h.ctaSecondary)}</a>` : ''}
-          </div>
+          <div class="cta-row">${waBtn('btn-primary', h.ctaPrimary || 'Solicitar orçamento')}${clientsOn && has(h.ctaSecondary) ? `<a class="btn btn-ghost" href="#cases">${esc(h.ctaSecondary)}</a>` : ''}</div>
         </div>
       </div>`;
     }
 
-    /* ---------- Seções ---------- */
-    const head = (eyebrow, title, text, center) => (has(eyebrow) || has(title) || has(text)) ? `
-      <div class="sec-head ${center ? 'sec-center' : ''}" data-reveal>
-        ${has(eyebrow) ? `<span class="eyebrow">${esc(eyebrow)}</span>` : ''}
-        ${has(title) ? `<h2 class="title">${esc(title)}</h2>` : ''}
-        ${has(text) ? `<p class="lead">${esc(text)}</p>` : ''}
-      </div>` : '';
-
     const R = {
       audience(d, bg) {
-        const a = d.audience || {};
-        const it = list(a.items).filter(i => has(i.title) || has(i.text));
+        const a = d.audience || {}, it = list(a.items).filter(i => has(i.title) || has(i.text));
         if (!it.length) return '';
-        return `<section id="para-quem" class="sec tex ${bg()}"><div class="container">
-          ${head(a.eyebrow, a.title)}
-          <div class="grid2" data-reveal>${it.map(i => `<article class="box"><h3>${esc(i.title)}</h3><p>${esc(i.text)}</p></article>`).join('')}</div>
-        </div></section>`;
+        return `<section id="para-quem" class="sec tex ${bg()}"><div class="container">${head(a.eyebrow, a.title)}
+          <div class="grid2" data-reveal>${it.map(i => `<article class="box"><h3>${esc(i.title)}</h3><p>${esc(i.text)}</p></article>`).join('')}</div></div></section>`;
       },
-
       clients(clients) {
         return `<section id="cases" aria-label="Cases em vídeo">${clients.map((c, i) => {
-          const bgOp = (c.bgOpacity ?? 20) / 100, grOp = (c.gradientOpacity ?? 60) / 100;
-          const groups = c.groups.map(g => `
-            <div class="group">
-              ${has(g.name) ? `<div class="group-name">${esc(g.name)}</div>` : ''}
-              <div class="group-row">${g.clips.map(cl => vidTile({ src: cl.src, poster: posterOf(cl), label: cl.label, dur: cl.dur, light: c.light, deep: c.deep, aria: `Assistir ${c.title}, ${cl.label}` })).join('')}</div>
-            </div>`).join('');
+          const L = window.SITE_LOGO_STYLE(c);
+          const logo = has(c.bandLogo) ? `<div class="band-logo" style="${L.wrap}"><img src="${esc(c.bandLogo)}" alt="${esc(c.title)}" style="${L.img}"></div>` : '';
+          const showName = has(c.title) && (!has(c.bandLogo) || c.bandShowName !== false);
+          const groups = c.groups.map(g => `<div class="group">${has(g.name) ? `<div class="group-name">${esc(g.name)}</div>` : ''}
+            <div class="group-row">${g.clips.map(cl => vidTile({ src: cl.src, poster: posterOf(cl), label: cl.label, dur: cl.dur, light: c.light, deep: c.deep, aria: `Assistir ${c.title}, ${cl.label}` })).join('')}</div></div>`).join('');
           return `<section id="band-${i}" class="band ${i % 2 ? 'flip' : ''}" style="--c:${esc(c.c)};--c-light:${esc(c.light)};--c-deep:${esc(c.deep)};z-index:${25 - i}">
-            <div class="band-img" style="--bg-op:${bgOp};${has(c.bgImg) ? `background-image:url('${esc(c.bgImg)}');` : ''}" aria-hidden="true"></div>
-            <div class="band-grad" style="--grad-op:${grOp}" aria-hidden="true"></div>
+            <div class="band-img" style="--bg-op:${(c.bgOpacity ?? 20) / 100};${has(c.bgImg) ? `background-image:url('${esc(c.bgImg)}');` : ''}" aria-hidden="true"></div>
+            <div class="band-grad" style="--grad-op:${(c.gradientOpacity ?? 60) / 100}" aria-hidden="true"></div>
             <div class="container"><div class="band-grid">
               <div class="band-text" data-reveal>
                 <div class="band-kicker"><span>${esc(c.kicker)}</span>${c.concept ? '<span class="band-concept">Projeto conceito</span>' : ''}</div>
-                <h2>${esc(c.title)}</h2>
+                ${logo}${showName ? `<h2>${esc(c.title)}</h2>` : ''}
                 ${has(c.sub) ? `<p class="band-sub">${esc(c.sub)}</p>` : ''}
                 ${has(c.meta) ? `<div class="band-meta">${esc(c.meta)}</div>` : ''}
               </div>
               <div style="min-width:0"><div class="reel">${groups}</div></div>
-            </div></div>
-          </section>`;
+            </div></div></section>`;
         }).join('')}</section>`;
       },
-
       testimonials(d, bg) {
-        const t = d.testimonials || {};
-        const it = list(t.items).filter(x => has(x.text) || has(x.video));
+        const t = d.testimonials || {}, it = list(t.items).filter(x => has(x.text) || has(x.video));
         if (!it.length) return '';
-        return `<section id="depoimentos" class="sec tex ${bg()}"><div class="container">
-          ${head(t.eyebrow, t.title)}
-          <div class="grid3" data-reveal>${it.map(x => `
-            <article class="box">
-              ${has(x.video) ? `<div class="t-vid">${vidTile({ src: x.video, poster: posterOf({ src: x.video }), aria: `Depoimento de ${x.name || 'cliente'}` })}</div>` : ''}
-              ${has(x.text) ? `<div class="quote">“</div><p class="t-text">${esc(x.text)}</p>` : ''}
-              ${has(x.name) ? `<div class="t-name">${esc(x.name)}</div>` : ''}
-              ${has(x.role) ? `<div class="t-role">${esc(x.role)}</div>` : ''}
-            </article>`).join('')}
-          </div>
-        </div></section>`;
+        return `<section id="depoimentos" class="sec tex ${bg()}"><div class="container">${head(t.eyebrow, t.title)}
+          <div class="grid3" data-reveal>${it.map(x => `<article class="box">
+            ${has(x.video) ? `<div class="t-vid">${vidTile({ src: x.video, poster: posterOf({ src: x.video }), aria: 'Depoimento' })}</div>` : ''}
+            ${has(x.text) ? `<div class="quote">“</div><p class="t-text">${esc(x.text)}</p>` : ''}
+            ${has(x.name) ? `<div class="t-name">${esc(x.name)}</div>` : ''}${has(x.role) ? `<div class="t-role">${esc(x.role)}</div>` : ''}
+          </article>`).join('')}</div></div></section>`;
       },
-
       plans(d, bg) {
-        const p = d.plans || {};
-        const it = list(p.items).filter(x => has(x.title));
+        const p = d.plans || {}, it = list(p.items).filter(x => has(x.title));
         if (!it.length) return '';
         PLANS = it;
-        return `<section id="orcamento" class="sec tex ${bg()}"><div class="container">
-          ${head(p.eyebrow, p.title, p.text, true)}
+        return `<section id="orcamento" class="sec tex ${bg()}"><div class="container">${head(p.eyebrow, p.title, p.text, true)}
           <div class="attn-row"><div class="attn"><span class="ar">👇</span>${esc(p.attention || 'Selecione o que você precisa')}</div></div>
-          <div class="plans" data-reveal>${it.map((x, i) => `
-            <article class="box plan ${x.highlight ? 'hl' : ''}">
-              ${has(x.tag) ? `<span class="ptag">${esc(x.tag)}</span>` : ''}
-              <h3>${esc(x.title)}</h3>
-              ${has(x.desc) ? `<p>${esc(x.desc)}</p>` : ''}
-              ${list(x.bullets).filter(has).length ? `<ul class="checks">${list(x.bullets).filter(has).map(b => `<li>${esc(b)}</li>`).join('')}</ul>` : ''}
-              <div class="spacer"></div>
-              <button type="button" class="btn btn-primary btn-block" data-plan="${i}"><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg>${esc(x.button || 'Quero este')}<span class="arr">→</span></button>
-            </article>`).join('')}
-          </div>
-        </div></section>`;
+          <div class="plans" data-reveal>${it.map((x, i) => `<article class="box plan ${x.highlight ? 'hl' : ''}">
+            ${has(x.tag) ? `<span class="ptag">${esc(x.tag)}</span>` : ''}<h3>${esc(x.title)}</h3>${has(x.desc) ? `<p>${esc(x.desc)}</p>` : ''}
+            ${list(x.bullets).filter(has).length ? `<ul class="checks">${list(x.bullets).filter(has).map(b => `<li>${esc(b)}</li>`).join('')}</ul>` : ''}
+            <div class="spacer"></div>
+            <button type="button" class="btn btn-primary btn-block" data-plan="${i}"><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg>${esc(x.button || 'Quero este')}<span class="arr">→</span></button>
+          </article>`).join('')}</div></div></section>`;
       },
-
       services(d, bg) {
-        const s = d.services || {};
-        const it = list(s.items).filter(x => has(x.title));
+        const s = d.services || {}, it = list(s.items).filter(x => has(x.title));
         if (!it.length) return '';
-        return `<section id="servicos" class="sec tex ${bg()}"><div class="container">
-          ${head(s.eyebrow, s.title)}
-          <div class="grid2" data-reveal>${it.map(x => `
-            <article class="box">
-              <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
-                ${has(x.badge) ? `<span class="tag tag-green" style="box-shadow:none">${esc(x.badge)}</span>` : '<span></span>'}
-                ${has(x.tag) ? `<span style="font-size:13px;color:var(--muted);font-weight:600">${esc(x.tag)}</span>` : ''}
-              </div>
-              <h3 style="margin-top:16px">${esc(x.title)}</h3>
-              ${has(x.text) ? `<p>${esc(x.text)}</p>` : ''}
-              ${list(x.bullets).filter(has).length ? `<ul class="checks">${list(x.bullets).filter(has).map(b => `<li>${esc(b)}</li>`).join('')}</ul>` : ''}
-            </article>`).join('')}
-          </div>
-        </div></section>`;
+        return `<section id="servicos" class="sec tex ${bg()}"><div class="container">${head(s.eyebrow, s.title)}
+          <div class="grid2" data-reveal>${it.map(x => `<article class="box">
+            ${has(x.badge) ? `<span class="tag tag-solid">${esc(x.badge)}</span>` : ''}
+            <h3 style="margin-top:16px">${esc(x.title)}</h3>${has(x.text) ? `<p>${esc(x.text)}</p>` : ''}
+            ${list(x.bullets).filter(has).length ? `<ul class="checks">${list(x.bullets).filter(has).map(b => `<li>${esc(b)}</li>`).join('')}</ul>` : ''}
+          </article>`).join('')}</div></div></section>`;
       },
-
       compare(d, bg) {
-        const c = d.compare || {};
-        const th = list(c.theirs).filter(has), ou = list(c.ours).filter(has);
+        const c = d.compare || {}, th = list(c.theirs).filter(has), ou = list(c.ours).filter(has);
         if (!th.length && !ou.length) return '';
-        return `<section id="comparativo" class="sec tex ${bg()}"><div class="container">
-          ${head(c.eyebrow, c.title)}
+        return `<section id="comparativo" class="sec tex ${bg()}"><div class="container">${head(c.eyebrow, c.title)}
           <div class="cmp" data-reveal>
             <div class="cmp-col theirs"><h3>${esc(c.theirsLabel)}</h3><ul>${th.map(x => `<li><span aria-hidden="true">–</span><span>${esc(x)}</span></li>`).join('')}</ul></div>
             <div class="cmp-col ours"><h3>${esc(c.oursLabel)}</h3><ul>${ou.map(x => `<li><span class="ok" aria-hidden="true">✓</span><span>${esc(x)}</span></li>`).join('')}</ul></div>
           </div>
-          ${has(c.button) ? `<div class="cta-row" style="justify-content:flex-start;margin-top:36px"><a class="btn btn-primary" href="#orcamento" data-go="orcamento"><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg>${esc(c.button)}</a></div>` : ''}
-        </div></section>`;
+          ${has(c.button) ? `<div class="cta-row" style="justify-content:flex-start;margin-top:36px">${waBtn('btn-primary', c.button)}</div>` : ''}</div></section>`;
       },
-
       process(d, bg) {
-        const p = d.process || {};
-        const st = list(p.steps).filter(s => has(s.title));
+        const p = d.process || {}, st = list(p.steps).filter(s => has(s.title));
         if (!st.length) return '';
-        return `<section id="processo" class="sec tex ${bg()}"><div class="container">
-          ${head(p.eyebrow, p.title)}
-          <ol class="grid4" data-reveal style="list-style:none;padding:0;margin:0">${st.map((s, i) => `
-            <li class="box"><div class="num">${String(i + 1).padStart(2, '0')}</div><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p></li>`).join('')}
-          </ol>
-        </div></section>`;
+        return `<section id="processo" class="sec tex ${bg()}"><div class="container">${head(p.eyebrow, p.title)}
+          <ol class="grid4" data-reveal style="list-style:none;padding:0;margin:0">${st.map((s, i) => `<li class="box"><div class="num">${String(i + 1).padStart(2, '0')}</div><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p></li>`).join('')}</ol>
+          </div></section>`;
       },
-
       about(d, bg) {
         const a = d.about || {};
         if (!has(a.text) && !has(a.companyText)) return '';
-        const photo = has(a.photo) ? a.photo : (d.brand && d.brand.profileImg);
-        const mk = list(a.markets).filter(has);
-        return `<section id="sobre" class="sec tex ${bg()}"><div class="container">
-          ${head(a.eyebrow, a.title)}
+        const photo = has(a.photo) ? a.photo : (d.brand && d.brand.profileImg), mk = list(a.markets).filter(has);
+        return `<section id="sobre" class="sec tex ${bg()}"><div class="container">${head(a.eyebrow, a.title)}
           <div class="about" data-reveal>
             ${has(photo) ? `<div class="photo"><div class="frame"><img src="${esc(photo)}" alt="${esc(a.name)}" loading="lazy"></div></div>` : ''}
             <div>
-              ${has(a.name) ? `<h3 class="a-name">${esc(a.name)}</h3>` : ''}
-              ${has(a.role) ? `<div class="a-role">${esc(a.role)}</div>` : ''}
+              ${has(a.name) ? `<h3 class="a-name">${esc(a.name)}</h3>` : ''}${has(a.role) ? `<div class="a-role">${esc(a.role)}</div>` : ''}
               ${has(a.origin) ? `<div class="a-origin"><svg aria-hidden="true"><use href="#i-pin"/></svg>${esc(a.origin)}</div>` : ''}
               ${has(a.text) ? `<p class="a-text">${esc(a.text)}</p>` : ''}
               ${mk.length ? `<div class="small-label">Mercados em que já atuei</div><div class="chips">${mk.map(m => `<span class="chip">${esc(m)}</span>`).join('')}</div>` : ''}
               ${has(a.companyText) ? `<div class="company"><h4>${esc(a.companyTitle || 'Sobre a empresa')}</h4><p>${esc(a.companyText)}</p></div>` : ''}
             </div>
-          </div>
-        </div></section>`;
+          </div></div></section>`;
       },
-
       cta(d) {
         const c = d.cta || {};
         if (!has(c.title)) return '';
-        return `<section id="chamada" class="sec tex green final"><div class="container" data-reveal>
-          ${has(c.eyebrow) ? `<span class="eyebrow">${esc(c.eyebrow)}</span>` : ''}
-          <h2 class="title">${esc(c.title)}</h2>
-          <div class="cta-row"><a class="btn btn-cream" href="#orcamento" data-go="orcamento"><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg>${esc(c.button || 'Solicitar orçamento')}<span class="arr">→</span></a></div>
-        </div></section>`;
+        return `<section id="chamada" class="sec tex s-cream final"><div class="container" data-reveal>
+          ${has(c.eyebrow) ? `<span class="eyebrow">${esc(c.eyebrow)}</span>` : ''}<h2 class="title">${esc(c.title)}</h2>
+          <div class="cta-row">${waBtn('btn-primary', c.button || 'Solicitar orçamento')}</div></div></section>`;
       },
-
       custom(d, bg, key) {
-        const id = key.slice(7);
-        const s = list(d.custom).find(x => x.id === id);
+        const s = list(d.custom).find(x => x.id === key.slice(7));
         if (!s) return '';
         const media = list(s.media).filter(m => has(m.src));
         if (!has(s.title) && !has(s.text) && !media.length) return '';
-        const cls = { branco: 'paper', creme: 'cream', verde: 'green' }[s.bg] || bg();
-        const vert = media.some(m => m.format === 'vertical');
+        const cls = { escuro: 's-bg', profundo: 's-deep', creme: 's-cream' }[s.bg] || bg();
         const ratio = f => ({ vertical: 'v916', quadrado: 'v11' }[f] || 'v169');
-        return `<section id="sec-${esc(id)}" class="sec tex ${cls}"><div class="container">
-          ${head(s.eyebrow, s.title, s.text)}
-          ${media.length ? `<div class="media-grid ${vert ? 'has-vert' : ''}" data-reveal>${media.map(m => `
-            <div class="media">
-              ${m.type === 'video'
-                ? vidTile({ src: m.src, poster: posterOf({ src: m.src }), ratio: ratio(m.format), aria: m.caption || 'Vídeo' })
-                : `<div class="pic ${ratio(m.format)}"><img src="${esc(m.src)}" alt="${esc(m.caption)}" loading="lazy"></div>`}
-              ${has(m.caption) ? `<div class="cap">${esc(m.caption)}</div>` : ''}
-            </div>`).join('')}</div>` : ''}
-        </div></section>`;
+        return `<section id="sec-${esc(s.id)}" class="sec tex ${cls}"><div class="container">${head(s.eyebrow, s.title, s.text)}
+          ${media.length ? `<div class="media-grid ${media.some(m => m.format === 'vertical') ? 'has-vert' : ''}" data-reveal>${media.map(m => `<div class="media">
+            ${m.type === 'video' ? vidTile({ src: m.src, poster: posterOf({ src: m.src }), ratio: ratio(m.format), aria: m.caption || 'Vídeo' })
+              : `<div class="pic ${ratio(m.format)}"><img src="${esc(m.src)}" alt="${esc(m.caption)}" loading="lazy"></div>`}
+            ${has(m.caption) ? `<div class="cap">${esc(m.caption)}</div>` : ''}</div>`).join('')}</div>` : ''}</div></section>`;
       }
     };
 
     function footerHTML(d) {
-      const b = d.brand || {}, c = d.contact || {};
-      const insta = String(c.instagram || '').replace(/^@/, '');
+      const b = d.brand || {}, c = d.contact || {}, insta = String(c.instagram || '').replace(/^@/, '');
       const nav = [['cases', 'Cases'], ['orcamento', 'Orçamento'], ['processo', 'Processo'], ['sobre', 'Quem faz']]
-        .filter(([id]) => document.getElementById(id))
-        .map(([id, n]) => `<a class="ulink" href="#${id}">${n}</a>`).join('');
+        .filter(([id]) => document.getElementById(id)).map(([id, n]) => `<a class="ulink" href="#${id}">${n}</a>`).join('');
       return `<div class="container">
         <div class="f-top">
           <div><div class="f-brand">${esc(b.name)}</div>${has(b.tagline) ? `<div class="f-tag">${esc(b.tagline)}</div>` : ''}</div>
           <div class="f-links">
             ${has(c.email) ? `<a class="ulink" href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : ''}
             ${insta ? `<a class="ulink" href="https://instagram.com/${esc(insta)}" target="_blank" rel="noopener">@${esc(insta)} ↗</a>` : ''}
-            ${has(c.whatsapp) ? `<a class="btn btn-cream btn-sm" href="${esc(waLink(''))}" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg>WhatsApp</a>` : ''}
+            ${has(c.whatsapp) ? `<a class="btn btn-primary btn-sm" href="${esc(waLink(''))}" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg>WhatsApp</a>` : ''}
           </div>
         </div>
-        <div class="f-bottom">
-          <nav class="f-nav" aria-label="Links rápidos">${nav}</nav>
-          <span class="f-copy">© ${new Date().getFullYear()} ${esc(b.name)} · Todos os direitos reservados.</span>
-        </div>
+        <div class="f-bottom"><nav class="f-nav">${nav}</nav><span class="f-copy">© ${new Date().getFullYear()} ${esc(b.name)} · Todos os direitos reservados.</span></div>
       </div>`;
     }
 
-    /* ---------- Montagem ---------- */
     let io;
     function observeReveal() {
       const els = document.querySelectorAll('[data-reveal]:not(.in)');
       if (!('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('in')); return; }
       if (io) io.disconnect();
-      io = new IntersectionObserver(entries => entries.forEach(en => {
-        if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
-      }), { threshold: .12, rootMargin: '0px 0px -40px 0px' });
+      io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold: .12, rootMargin: '0px 0px -40px 0px' });
       els.forEach(e => io.observe(e));
     }
 
     function render(d) {
-      D = d;
+      D = d; PLANS = [];
       applyTheme(d.theme || {});
-      PLANS = [];
-      const clients = visibleClients(d);
-      const clientsOn = isOn(d, 'clients') && clients.length > 0;
+      const clients = visibleClients(d), clientsOn = isOn(d, 'clients') && clients.length > 0;
       $('hero').innerHTML = heroHTML(d, clients, clientsOn);
-
       let alt = 0;
-      const bg = () => (alt++ % 2 === 0 ? 'cream' : 'paper');
-      $('conteudo').innerHTML = list(d.layout).filter(l => l.on).map(l => {
-        if (l.key.startsWith('custom:')) return R.custom(d, bg, l.key);
-        if (l.key === 'clients') return clientsOn ? R.clients(clients) : '';
-        return R[l.key] ? R[l.key](d, bg) : '';
-      }).join('');
-
+      const bg = () => (alt++ % 2 === 0 ? 's-deep' : 's-bg');
+      $('conteudo').innerHTML = list(d.layout).filter(l => l.on).map(l =>
+        l.key.startsWith('custom:') ? R.custom(d, bg, l.key) : l.key === 'clients' ? (clientsOn ? R.clients(clients) : '') : (R[l.key] ? R[l.key](d, bg) : '')
+      ).join('');
       $('contato').innerHTML = footerHTML(d);
       observeReveal();
     }
 
-    /* ---------- Cliques ---------- */
     function irOrcamento(sec) {
       sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      sec.classList.remove('pulse');
-      clearTimeout(window._ao);
-      window._ao = setTimeout(() => {
-        sec.classList.add('show');
-        void sec.offsetWidth;
-        sec.classList.add('pulse');
-        setTimeout(() => sec.classList.remove('pulse'), 3400);
-      }, 600);
+      sec.classList.remove('pulse'); clearTimeout(window._ao);
+      window._ao = setTimeout(() => { sec.classList.add('show'); void sec.offsetWidth; sec.classList.add('pulse'); setTimeout(() => sec.classList.remove('pulse'), 3400); }, 600);
     }
-
     document.addEventListener('click', e => {
       const go = e.target.closest('[data-go="orcamento"]');
-      if (go) {
-        e.preventDefault();
-        const sec = $('orcamento');
-        if (sec) irOrcamento(sec); else window.open(waLink(''), '_blank', 'noopener');
-        return;
-      }
+      if (go) { e.preventDefault(); const sec = $('orcamento'); sec ? irOrcamento(sec) : window.open(waLink(''), '_blank', 'noopener'); return; }
       const pl = e.target.closest('[data-plan]');
-      if (pl) {
-        const x = PLANS[+pl.dataset.plan];
-        window.open(waLink((x && x.message) || ''), '_blank', 'noopener');
-        return;
-      }
+      if (pl) { const x = PLANS[+pl.dataset.plan]; window.open(waLink((x && x.message) || ''), '_blank', 'noopener'); return; }
       const v = e.target.closest('.vid[data-src]');
       if (v) {
         const { type, src } = playerUrl(v.dataset.src);
         const box = document.createElement('div');
-        box.className = v.className + ' playing';
-        box.style.cssText = v.style.cssText;
-        box.innerHTML = type === 'youtube'
-          ? `<iframe src="${esc(src)}" title="Vídeo" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen></iframe>`
-          : `<video src="${esc(src)}" autoplay controls playsinline></video>`;
+        box.className = v.className + ' playing'; box.style.cssText = v.style.cssText;
+        box.innerHTML = type === 'youtube' ? `<iframe src="${esc(src)}" title="Vídeo" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen></iframe>` : `<video src="${esc(src)}" autoplay controls playsinline></video>`;
         v.replaceWith(box);
       }
     });
 
-    /* ---------- Carregamento ---------- */
     render(window.SITE_MIGRATE(null));
-
     if (CFG.supabaseUrl && !CFG.supabaseUrl.includes('SEU-PROJETO')) {
       fetch(`${CFG.supabaseUrl}/rest/v1/site_content?id=eq.1&select=data`, { headers: { apikey: CFG.supabaseAnonKey } })
-        .then(r => r.ok ? r.json() : [])
-        .then(rows => {
-          const data = rows && rows[0] && rows[0].data;
-          if (data && Object.keys(data).length) render(window.SITE_MIGRATE(data));
-        })
-        .catch(() => { /* mantém o conteúdo padrão */ });
+        .then(r => r.ok ? r.json() : []).then(rows => { const data = rows && rows[0] && rows[0].data; if (data && Object.keys(data).length) render(window.SITE_MIGRATE(data)); })
+        .catch(() => {});
     }
   </script>
 </body>
